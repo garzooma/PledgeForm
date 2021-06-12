@@ -1,0 +1,57 @@
+﻿@page "/pledgers"
+@using PledgeFormApp.Shared
+@inject HttpClient Http
+
+<h1>Pledgers Page</h1>
+
+
+<button @onclick="AddPledger">Add Pledger</button>
+
+@if (pledgerList == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <h3>List</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Pledger pledger in pledgerList)
+            {
+                <tr>
+                    <td>@pledger.ID</td>
+                    <td>@pledger.Name</td>
+                    <td>@pledger.Amount</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+
+    private Pledger[] pledgerList;
+
+    protected override async Task OnInitializedAsync()
+    {
+        pledgerList = await Http.GetFromJsonAsync<Pledger[]>("Pledgers");
+    }
+
+    protected async Task AddPledger()
+    {
+        HttpResponseMessage returnMsg = await Http.PostAsJsonAsync<Pledger>("/pledgers/create", new Pledger
+        {
+            Name = "Tom",
+            Amount = 88,
+            QBName = "QTom"
+        });
+    }
+
+}
