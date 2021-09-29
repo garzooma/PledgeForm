@@ -20,7 +20,7 @@ namespace PledgeFormApp.Server
       _connectionString = connectionString;
     }
 
-    public void Create(Pledger pledger)
+    public int Create(Pledger pledger)
     {
       using (var db = new AppDb(_connectionString))
       {
@@ -29,17 +29,18 @@ namespace PledgeFormApp.Server
         var query = new Model.PledgerQuery(db);
         var result = query.InsertAsync(pledger);
         result.Wait();
+        return result.Result;
       }
     }
 
-    public void Delete(Pledger pledger)
+    public void Delete(int index)
     {
       using (var db = new AppDb(_connectionString))
       {
         Task open = db.Connection.OpenAsync();
         open.Wait();
         var query = new Model.PledgerQuery(db);
-        var result = query.DeleteAsync(pledger.ID);
+        var result = query.DeleteAsync(index);
         result.Wait();
       }
     }

@@ -9,8 +9,8 @@ namespace PledgeFormApp.Server
   {
     IEnumerable<T> FindAll();
     T FindByIndex(int index);
-    void Create(T entity);
+    int Create(T entity);
     void Update(T entity);
-    void Delete(T entity);
+    void Delete(int index);
   }
 }

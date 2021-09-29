@@ -1,0 +1,41 @@
+﻿@page "/pledgerdetail/{Id}"
+@using PledgeFormApp.Shared
+@inject HttpClient Http
+
+<h3 class="page-title">Detail</h3>
+
+@if (@pledgerDetail == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <p>ID: @pledgerDetail.ID </p>
+    <p>Name: @pledgerDetail.Name</p>
+    <p>Amount: @pledgerDetail.Amount</p>
+    <p>QBName: @pledgerDetail.QBName</p>
+
+}
+
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+    //public string Name { get { return detail?.Name; } }
+
+    //Pledger detail = new Pledger()
+    //{
+    //    ID = 454,
+    //    Name = "Charlie Brown",
+    //    Amount = 20,
+    //    QBName = "CharlieBrown"
+    //};
+
+    private Pledger pledgerDetail;
+
+    protected override async Task OnInitializedAsync()
+    {
+        pledgerDetail = await Http.GetFromJsonAsync<Pledger>("Pledgers/" + Id);
+    }
+}

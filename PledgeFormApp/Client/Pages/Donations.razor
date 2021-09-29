@@ -1,0 +1,51 @@
+﻿@page "/donationspage"
+@using PledgeFormApp.Shared
+@inject HttpClient Http
+
+<h1 class="page-title">Donations List</h1>
+
+
+@if (donationList == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <h3>List</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Pledger Id</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Donation donation in donationList)
+            {
+            <tr>
+                <td>@donation.ID</td>
+                <td>@donation.Date</td>
+                <td>@donation.Amount</td>
+                <td>@donation.PledgerId</td>
+            </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@code {
+    private Donation[] donationList;
+
+    [Inject]
+    Services.IDonationDataService DonationDataService { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        //pledgerList = await Http.GetFromJsonAsync<Pledger[]>("Pledgers");
+        IEnumerable<Donation> list = await DonationDataService.GetAllDonations();
+        donationList = list.ToArray();
+    }
+}

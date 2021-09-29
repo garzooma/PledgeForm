@@ -89,7 +89,7 @@ using PledgeFormApp.Shared;
 #line default
 #line hidden
 #nullable disable
-    [Microsoft.AspNetCore.Components.RouteAttribute("/pledgers")]
+    [Microsoft.AspNetCore.Components.RouteAttribute("/pledgerspage")]
     public partial class Pledgers : Microsoft.AspNetCore.Components.ComponentBase
     {
         #pragma warning disable 1998
@@ -98,25 +98,49 @@ using PledgeFormApp.Shared;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 38 "F:\ga\proj\dotnet\blazor\pledgeform\PledgeFormApp\Client\Pages\Pledgers.razor"
+#line 51 "F:\ga\proj\dotnet\blazor\pledgeform\PledgeFormApp\Client\Pages\Pledgers.razor"
        
 
-    private Pledger[] pledgerList;
+  private Pledger[] pledgerList;
 
-    protected override async Task OnInitializedAsync()
-    {
-        pledgerList = await Http.GetFromJsonAsync<Pledger[]>("Pledgers");
-    }
+  [Inject]
+  Services.IPledgerDataService PledgerDataService { get; set; }
 
-    protected async Task AddPledger()
-    {
-        HttpResponseMessage returnMsg = await Http.PostAsJsonAsync<Pledger>("/pledgers/create", new Pledger
-        {
-            Name = "Tom",
-            Amount = 88,
-            QBName = "QTom"
-        });
-    }
+  [Inject]
+  public NavigationManager NavigationManager { get; set; }
+
+  protected override async Task OnInitializedAsync()
+  {
+      //pledgerList = await Http.GetFromJsonAsync<Pledger[]>("Pledgers");
+      IEnumerable<Pledger> list = await PledgerDataService.GetAllPledgers();
+      pledgerList = list.ToArray();
+  }
+
+  protected async Task AddPledger()
+  {
+      //HttpResponseMessage returnMsg = await Http.PostAsJsonAsync<Pledger>("/pledgers/create", new Pledger
+      //{
+      //    Name = "Tom",
+      //    Amount = 88,
+      //    QBName = "QTom"
+      //});
+      await Task.Run(() => { NavigationManager.NavigateTo("/addpledger"); });
+  }
+
+  protected async Task DeletePledger(Pledger pledger)
+  {
+      await PledgerDataService.DeletePledger(pledger.ID);
+      IEnumerable<Pledger> list = await PledgerDataService.GetAllPledgers();
+      pledgerList = list.ToArray();
+  }
+
+  private int currentCount = 0;
+
+
+  private void IncrementCount()
+  {
+      currentCount++;
+  }
 
 
 #line default

@@ -90,7 +90,7 @@ using PledgeFormApp.Client.Shared;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 33 "F:\ga\proj\dotnet\blazor\pledgeform\PledgeFormApp\Client\Shared\NavMenu.razor"
+#line 34 "F:\ga\proj\dotnet\blazor\pledgeform\PledgeFormApp\Client\Shared\NavMenu.razor"
        
     private bool collapseNavMenu = true;
 

@@ -1,0 +1,94 @@
+﻿@page "/pledgerstest"
+@using PledgeFormApp.Shared
+@inject HttpClient Http
+
+
+<h1 class="page-title">Pledgers List</h1>
+
+<button @onclick="IncrementCount">Add Pledger</button>
+<button class="btn btn-primary" @onclick="IncrementCount">
+    <i class="fas fa-edit"></i>
+</button>
+
+
+@if (pledgerList == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <h3>List</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Pledger pledger in pledgerList)
+            {
+                <tr>
+                    <td>@pledger.ID</td>
+                    <td>@pledger.Name</td>
+                    <td>@pledger.Amount</td>
+                    <td>
+                        <a class="btn btn-success" href="pledgerdetail/@pledger.ID">Detail</a>
+                    </td>
+                    <td><button @onclick="@(()=>DeletePledger(pledger))">Delete</button></td>
+                    <td>
+                        <a href="@($"pledgeredit/{pledger.ID}")" class="btn btn-primary">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+
+  private Pledger[] pledgerList;
+
+  [Inject]
+  Services.IPledgerDataService PledgerDataService { get; set; }
+
+  [Inject]
+  public NavigationManager NavigationManager { get; set; }
+
+  protected override async Task OnInitializedAsync()
+  {
+      //pledgerList = await Http.GetFromJsonAsync<Pledger[]>("Pledgers");
+      IEnumerable<Pledger> list = await PledgerDataService.GetAllPledgers();
+      pledgerList = list.ToArray();
+  }
+
+  protected async Task AddPledger()
+  {
+      //HttpResponseMessage returnMsg = await Http.PostAsJsonAsync<Pledger>("/pledgers/create", new Pledger
+      //{
+      //    Name = "Tom",
+      //    Amount = 88,
+      //    QBName = "QTom"
+      //});
+      await Task.Run(() => { NavigationManager.NavigateTo("/addpledger"); });
+    }
+
+  protected async Task DeletePledger(Pledger pledger)
+  {
+      await PledgerDataService.DeletePledger(pledger.ID);
+      IEnumerable<Pledger> list = await PledgerDataService.GetAllPledgers();
+      pledgerList = list.ToArray();
+  }
+
+  private int currentCount = 0;
+
+
+  private void IncrementCount()
+  {
+      currentCount++;
+  }
+
+}

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "Qi0qC34GfWvdHwDYdtNSdGORLSRsKOQ8FFhwU0yYD3VmjWMypxyA/HzH/7zEoqawxNEcSkD/rutoVCn+/J0tog==",
+  "dgSpecHash": "IfPjWRz/Qje+/11ON417p/B2hyATp0qJT4OaZmmPAijAwiug4tJEdXu7egnxcAr+v91/xWDCJQ1gOyhbV0wyZQ==",
   "success": true,
   "projectFilePath": "F:\\ga\\proj\\dotnet\\blazor\\pledgeform\\PledgeFormApp\\Server\\PledgeFormApp.Server.csproj",
   "expectedPackageFiles": [

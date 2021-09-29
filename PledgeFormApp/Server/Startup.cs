@@ -27,6 +27,7 @@ namespace PledgeFormApp.Server
       services.AddRazorPages();
       services.AddTransient<AppDb>(_ => new AppDb(Configuration["ConnectionStrings:DefaultConnection"]));
       services.AddScoped<IPledgersRepository, PledgersRepository>();
+      services.AddScoped<IDonationsRepository, DonationsRepository>();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

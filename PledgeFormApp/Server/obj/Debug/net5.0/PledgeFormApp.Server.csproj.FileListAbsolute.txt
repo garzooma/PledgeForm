@@ -37,6 +37,7 @@ F:\ga\proj\dotnet\blazor\pledgeform\PledgeFormApp\Server\bin\Debug\net5.0\Pledge
 F:\ga\proj\dotnet\blazor\pledgeform\PledgeFormApp\Server\bin\Debug\net5.0\PledgeFormApp.Shared.dll
 F:\ga\proj\dotnet\blazor\pledgeform\PledgeFormApp\Server\bin\Debug\net5.0\PledgeFormApp.Client.pdb
 F:\ga\proj\dotnet\blazor\pledgeform\PledgeFormApp\Server\bin\Debug\net5.0\PledgeFormApp.Shared.pdb
+F:\ga\proj\dotnet\blazor\pledgeform\PledgeFormApp\Server\obj\Debug\net5.0\PledgeFormApp.Server.csproj.AssemblyReference.cache
 F:\ga\proj\dotnet\blazor\pledgeform\PledgeFormApp\Server\obj\Debug\net5.0\PledgeFormApp.Server.GeneratedMSBuildEditorConfig.editorconfig
 F:\ga\proj\dotnet\blazor\pledgeform\PledgeFormApp\Server\obj\Debug\net5.0\PledgeFormApp.Server.AssemblyInfoInputs.cache
 F:\ga\proj\dotnet\blazor\pledgeform\PledgeFormApp\Server\obj\Debug\net5.0\PledgeFormApp.Server.AssemblyInfo.cs
@@ -59,4 +60,3 @@ F:\ga\proj\dotnet\blazor\pledgeform\PledgeFormApp\Server\obj\Debug\net5.0\Pledge
 F:\ga\proj\dotnet\blazor\pledgeform\PledgeFormApp\Server\obj\Debug\net5.0\ref\PledgeFormApp.Server.dll
 F:\ga\proj\dotnet\blazor\pledgeform\PledgeFormApp\Server\obj\Debug\net5.0\PledgeFormApp.Server.pdb
 F:\ga\proj\dotnet\blazor\pledgeform\PledgeFormApp\Server\obj\Debug\net5.0\PledgeFormApp.Server.genruntimeconfig.cache
-F:\ga\proj\dotnet\blazor\pledgeform\PledgeFormApp\Server\obj\Debug\net5.0\PledgeFormApp.Server.csproj.AssemblyReference.cache

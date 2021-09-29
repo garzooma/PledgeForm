@@ -88,7 +88,7 @@ namespace DBTests
 
       Pledger pledger = pledgerList[0];
 
-      repository.Delete(pledger);
+      repository.Delete(pledger.ID);
       pledgerList = repository.FindAll().ToList();
       Assert.IsNotNull(pledgerList);
       Assert.AreEqual(0, pledgerList.Count);

@@ -1,0 +1,58 @@
+﻿@page "/pledgeredit/{PledgerId}"
+
+@using PledgeFormApp.Shared
+@using Services
+
+@if (Pledger == null) {
+    <p><em>Loading...</em></p>
+}
+else { 
+    <section class="pledger-edit">
+        <h1 class="page-title">Details for @Pledger.Name</h1>
+
+        <EditForm Model="@Pledger" OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInvalidSubmit">
+            <div class="form-group">
+                <label for="name" class="col-sm-3">Name: </label>
+                <InputText id="name" class="form-control col-sm-8" placeholder="Enter name"
+                           @bind-Value="@Pledger.Name" />
+            </div>
+            <div class="form-group">
+                <label for="amount" class="col-sm-3">Amount: </label>
+                <InputNumber id="amount" class="form-control col-sm-8" placeholder="Enter amount"
+                             @bind-Value="@Pledger.Amount" />
+            </div>
+            <div class="form-group">
+                <label for="qbName" class="col-sm-3">QuickBooks name: </label>
+                <InputText id="qbName" class="form-control col-sm-8" placeholder="Enter QuickBooks name"
+                           @bind-Value="@Pledger.QBName" />
+            </div>
+            <button type="submit" class="btn btn-primary edit-btn">Submit</button>
+        </EditForm>
+    </section>
+}
+
+@code {
+
+  [Inject]
+  public IPledgerDataService PledgerDataService { get; set; }
+
+  [Parameter]
+  public string PledgerId { get; set; }
+
+  public Pledger Pledger { get; set; } = new Pledger();
+
+  protected override async Task OnInitializedAsync()
+  {
+      Pledger = await PledgerDataService.GetPledgerDetails(int.Parse(PledgerId));
+  }
+
+  protected async Task HandleValidSubmit()
+  {
+      await PledgerDataService.UpdatePledger(Pledger);
+  }
+
+  protected async Task HandleInvalidSubmit()
+  {
+      await Task.CompletedTask;
+  }
+}

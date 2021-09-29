@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using PledgeFormApp.Shared;
 using System;
+using System.Web;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -27,15 +28,30 @@ namespace PledgeFormApp.Server.Controllers
 
 
     [HttpGet]
-    public IEnumerable<Pledger> Get()
+    public async Task <ActionResult<IEnumerable<Pledger>>> Get()
     {
-      return _repository.FindAll();
+      try
+      { 
+        return Ok( await Task.Run(() => _repository.FindAll()));
+      } catch (Exception excp)
+      {
+        return StatusCode(StatusCodes.Status500InternalServerError, excp);
+      }
     }
 
     [HttpGet("{id}")]
-    public Pledger Get(int id)
+    public async Task<ActionResult<Pledger>> Get(int id)
     {
-      return _repository.FindByIndex(id);
+      try
+      {
+        Pledger pledger = await Task.Run(() => _repository.FindByIndex(id));
+        if (pledger == null) return NotFound();
+        return Ok(pledger);
+      } 
+      catch (Exception ex)
+      {
+        return StatusCode(StatusCodes.Status500InternalServerError, ex);
+      }
     }
 
     [HttpGet("version")]
@@ -44,11 +60,6 @@ namespace PledgeFormApp.Server.Controllers
       return "1.0";
     }
 
-    //// GET: PledgersController
-    //public ActionResult Index()
-    //{
-    //  return View();
-    //}
 
     //// GET: PledgersController/Details/5
     //public async Task<IActionResult> Details(int id)
@@ -64,10 +75,17 @@ namespace PledgeFormApp.Server.Controllers
 
     // GET: PledgersController/Create
     [HttpPost("create")]
-    public void Create([FromBody] Pledger pledger)
+    public async Task<ActionResult<Pledger>> Create([FromBody] Pledger pledger)
     {
-      _repository.Create(pledger);
-      return;
+      try
+      {
+        int id = _repository.Create(pledger);
+        return Ok(await Task.Run(() => _repository.FindByIndex(id)));
+      }
+      catch (Exception ex)
+      {
+        return StatusCode(StatusCodes.Status500InternalServerError, ex);
+      }
     }
 
     //// POST: PledgersController/Create
@@ -107,20 +125,26 @@ namespace PledgeFormApp.Server.Controllers
     //}
 
     // GET: PledgersController/Delete/5
-    [HttpPost]
-    public void Delete(Pledger pledger)
+    [HttpPost("delete")]
+    public async Task<ActionResult> Delete([FromBody] int id)
     {
-      _repository.Delete(pledger);
+      await Task.Run(() => _repository.Delete(id));
 
-      return;
+      return Ok();
     }
 
-    [HttpPost]
-    public void Update(Pledger pledger)
+    [HttpPut("update")]
+    public async Task<ActionResult<Pledger>> Update([FromBody] Pledger pledger)
     {
-      _repository.Update(pledger);
-
-      return;
+      try
+      {
+        await Task.Run(() => _repository.Update(pledger));
+        return Ok(await Task.Run(() => _repository.FindByIndex(pledger.ID)));
+      }
+      catch (Exception ex)
+      {
+        return StatusCode(StatusCodes.Status500InternalServerError, ex);
+      }
     }
 
     //// POST: PledgersController/Delete/5

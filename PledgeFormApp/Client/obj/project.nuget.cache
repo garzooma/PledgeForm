@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "NsyrTOLmpVHWLmDshJIO2wzqFmZLH9X7GVYu3KIyZAiNDot7eg3IR5xcX+je7VIMRtz1h5znt0SgbZXjVSXpsA==",
+  "dgSpecHash": "kPl4zRrM2+5jstNyEervOtwgy7+16BtgiBBZNjOAlxwF6wgWs7vt7SfkRadbaYM5uxn9JVUdxWRyiuVXndsbjw==",
   "success": true,
   "projectFilePath": "F:\\ga\\proj\\dotnet\\blazor\\pledgeform\\PledgeFormApp\\Client\\PledgeFormApp.Client.csproj",
   "expectedPackageFiles": [
@@ -30,7 +30,7 @@
     "C:\\Users\\Owner\\.nuget\\packages\\microsoft.jsinterop.webassembly\\5.0.4\\microsoft.jsinterop.webassembly.5.0.4.nupkg.sha512",
     "C:\\Users\\Owner\\.nuget\\packages\\system.io.pipelines\\5.0.1\\system.io.pipelines.5.0.1.nupkg.sha512",
     "C:\\Users\\Owner\\.nuget\\packages\\system.net.http.json\\5.0.0\\system.net.http.json.5.0.0.nupkg.sha512",
-    "C:\\Users\\Owner\\.nuget\\packages\\microsoft.netcore.app.runtime.browser-wasm\\5.0.7\\microsoft.netcore.app.runtime.browser-wasm.5.0.7.nupkg.sha512"
+    "C:\\Users\\Owner\\.nuget\\packages\\microsoft.netcore.app.runtime.browser-wasm\\5.0.10\\microsoft.netcore.app.runtime.browser-wasm.5.0.10.nupkg.sha512"
   ],
   "logs": []
 }

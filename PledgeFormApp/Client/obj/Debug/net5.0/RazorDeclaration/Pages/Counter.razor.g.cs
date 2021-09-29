@@ -91,7 +91,7 @@ using PledgeFormApp.Client.Shared;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 9 "F:\ga\proj\dotnet\blazor\pledgeform\PledgeFormApp\Client\Pages\Counter.razor"
+#line 11 "F:\ga\proj\dotnet\blazor\pledgeform\PledgeFormApp\Client\Pages\Counter.razor"
        
     private int currentCount = 0;
 

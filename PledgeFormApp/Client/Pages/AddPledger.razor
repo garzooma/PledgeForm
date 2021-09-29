@@ -1,0 +1,51 @@
+﻿@page "/addpledger"
+@using PledgeFormApp.Shared
+@inject HttpClient Http
+<h3>Add Pledger</h3>
+<EditForm Model=@pledger OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInvalidSubmit">
+    <div class="form-group">
+        <label for="Name">Name</label>
+        <InputText @bind-Value=pledger.Name class="form-control" id="Name" />
+    </div>
+    <div class="form-group">
+        <label for="Age">Amount</label>
+        <InputNumber @bind-Value=pledger.Amount class="form-control" id="Amount" />
+    </div>
+    <div class="form-group">
+        <label for="QBName">QuickBooks Name</label>
+        <InputText @bind-Value=pledger.QBName class="form-control" id="QBName" />
+    </div>
+    <input type="submit" class="btn btn-primary edit-btn" value="Save" />
+</EditForm>
+<div class="alert @StatusClass">@Message</div>
+
+@code {
+
+  [Inject]
+  Services.IPledgerDataService PledgerDataService { get; set; }
+  Pledger pledger;
+
+  protected string Message = string.Empty;
+  protected string StatusClass = string.Empty;
+
+  protected override async Task OnInitializedAsync()
+  {
+      pledger =  new Pledger();
+      await Task.CompletedTask;
+  }
+
+
+  protected async Task HandleValidSubmit()
+  {
+      await PledgerDataService.AddPledger(pledger);
+      StatusClass = "alert-success";
+      Message = "New Pledger submitted.";
+  }
+
+
+  protected void HandleInvalidSubmit()
+  {
+      StatusClass = "alert-danger";
+      Message = "There are some validation errors.  Please try again.";
+  }
+}

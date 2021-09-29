@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PledgeFormApp.Server;
 using PledgeFormApp.Server.Controllers;
@@ -14,30 +15,34 @@ namespace Test
     public void TestCtor()
     {
       PledgersController controller = new PledgersController(new TestRepository());
+      Assert.IsNotNull(controller);
     }
 
     [TestMethod]
-    public void TestRead()
+    public async void TestRead()
     {
       PledgersController controller = new PledgersController(new TestRepository());
-      List<Pledger> results = controller.Get().ToList();
+      ActionResult<IEnumerable<Pledger>> result = await controller.Get();
+      List<Pledger> results = result.Value.ToList();
       Assert.IsNotNull(results);
-      Assert.AreEqual(1, results.Count);
+      Assert.AreEqual(1, results.ToList().Count);
       Pledger pledger = results.First();
       Assert.AreEqual("Test Name", pledger.Name);
     }
 
     [TestMethod]
-    public void TestReadByIndex()
+    public async void TestReadByIndex()
     {
       PledgersController controller = new PledgersController(new TestRepository());
-      List<Pledger> results = controller.Get().ToList();
+      ActionResult<IEnumerable<Pledger>> result = await controller.Get();
+      List<Pledger> results = result.Value.ToList();
       Assert.IsNotNull(results);
       Assert.AreEqual(1, results.Count);
       Pledger pledger = results.First();
       Assert.AreEqual("Test Name", pledger.Name);
 
-      Pledger retPledger = controller.Get(pledger.ID);
+      ActionResult<Pledger> result2 = await controller.Get(pledger.ID);
+      Pledger retPledger = result2.Value;
       Assert.IsNotNull(retPledger);
       Assert.AreEqual(pledger.ID, retPledger.ID);
       Assert.AreEqual(pledger.Name, retPledger.Name);
@@ -46,44 +51,48 @@ namespace Test
     }
 
     [TestMethod]
-    public void TestCreate()
+    public async void TestCreate()
     {
       PledgersController controller = new PledgersController(new TestRepository());
-      List<Pledger> results = controller.Get().ToList();
+      ActionResult<IEnumerable<Pledger>> result = await controller.Get();
+      List<Pledger> results = result.Value.ToList();
       Assert.IsNotNull(results);
       Assert.AreEqual(1, results.Count);
       Pledger pledger = results.First();
       Assert.AreEqual("Test Name", pledger.Name);
 
       Pledger newPledger = new Pledger() { Name = "New Pledger" };
-      controller.Create(newPledger);
-      results = controller.Get().ToList();
-      Assert.IsNotNull(results);
+      await controller.Create(newPledger);
+      result = await controller.Get();
+      results = result.Value.ToList();
       Assert.AreEqual(2, results.Count);
       Assert.IsTrue(results.Any(p => p.Name == "New Pledger"));
 
     }
 
     [TestMethod]
-    public void TestDelete()
+    public async void TestDelete()
     {
       PledgersController controller = new PledgersController(new TestRepository());
-      List<Pledger> results = controller.Get().ToList();
+      ActionResult<IEnumerable<Pledger>> result = await controller.Get();
+      List<Pledger> results = result.Value.ToList();
       Assert.IsNotNull(results);
       Assert.AreEqual(1, results.Count);
       Pledger pledger = results.First();
       Assert.AreEqual("Test Name", pledger.Name);
 
       Pledger newPledger = new Pledger() { Name = "New Pledger" };
-      controller.Create(newPledger);
-      results = controller.Get().ToList();
+      await controller.Create(newPledger);
+      result = await controller.Get();
+      results = result.Value.ToList();
       Assert.IsNotNull(results);
       Assert.AreEqual(2, results.Count);
       Assert.IsTrue(results.Any(p => p.Name == "New Pledger"));
       Pledger returnedPledger = results.FirstOrDefault(p => p.Name == newPledger.Name);
 
-      controller.Delete(returnedPledger);
-      results = controller.Get().ToList();
+      await controller.Delete(returnedPledger.ID);
+      result = await controller.Get();
+      results = result.Value.ToList();
       Assert.IsNotNull(results);
       Assert.AreEqual(1, results.Count);
       pledger = results.First();
@@ -92,18 +101,20 @@ namespace Test
     }
 
     [TestMethod]
-    public void TestUpdate()
+    public async void TestUpdate()
     {
       PledgersController controller = new PledgersController(new TestRepository());
-      List<Pledger> results = controller.Get().ToList();
+      ActionResult<IEnumerable<Pledger>> result = await controller.Get();
+      List<Pledger> results = result.Value.ToList();
       Assert.IsNotNull(results);
       Assert.AreEqual(1, results.Count);
       Pledger pledger = results.First();
       Assert.AreEqual("Test Name", pledger.Name);
 
       Pledger newPledger = new Pledger() { Name = "New Pledger", Amount=25 };
-      controller.Create(newPledger);
-      results = controller.Get().ToList();
+      await controller.Create(newPledger);
+      result = await controller.Get();
+      results = result.Value.ToList();
       Assert.IsNotNull(results);
       Assert.AreEqual(2, results.Count);
       Assert.IsTrue(results.Any(p => p.Name == "New Pledger"));
@@ -118,8 +129,10 @@ namespace Test
         Amount = returnedPledger.Amount + 10,
         QBName = returnedPledger.QBName
       };
-      controller.Update(modifiedPledger);
-      pledger = controller.Get(modifiedPledger.ID);
+      await controller.Update(modifiedPledger);
+
+      ActionResult<Pledger> result2 = await controller.Get(pledger.ID);
+      Pledger retPledger = result2.Value;
       Assert.AreEqual(modifiedPledger.ID, pledger.ID);
       Assert.AreEqual(modifiedPledger.Name, pledger.Name);
       Assert.AreEqual(modifiedPledger.Amount, pledger.Amount);
@@ -129,7 +142,7 @@ namespace Test
     internal class TestRepository : IPledgersRepository
     {
       private int nextID = 1;
-      private List<Pledger> pledgersList = new List<Pledger>();
+      private readonly List<Pledger> pledgersList = new List<Pledger>();
 
       public TestRepository()
       {
@@ -140,7 +153,7 @@ namespace Test
         });
       }
 
-      public void Create(Pledger pledger)
+      public int Create(Pledger pledger)
       {
         Pledger newPledger = new Pledger()
         {
@@ -150,11 +163,12 @@ namespace Test
           QBName = pledger.QBName
         };
         pledgersList.Add(newPledger);
+        return newPledger.ID;
       }
 
-      public void Delete(Pledger pledger)
+      public void Delete(int index)
       {
-        Pledger existingPledger = pledgersList.FirstOrDefault(p => p.ID == pledger.ID);
+        Pledger existingPledger = pledgersList.FirstOrDefault(p => p.ID == index);
         pledgersList.Remove(existingPledger);
       }
 
