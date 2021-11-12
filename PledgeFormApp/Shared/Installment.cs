@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 
 namespace PledgeFormApp.Shared
 {
-  public class Donation
+  public class Installment
   {
     public int ID { get; set; }
     public int Amount { get; set; }
     public DateTime Date { get; set; }
     public int PledgerId { get; set; }
-    public Donation() { }
-
+    public string Pledger { get; set; }
+    public string QBName { get; set; }
     public override string ToString()
     {
-      return string.Format("{0}:{1}", PledgerId, Date.ToShortDateString());
+      return string.Format("{0} {1}", Date.Date, Pledger);
     }
   }
 }

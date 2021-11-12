@@ -1,0 +1,52 @@
+﻿@page "/installmentspage"
+@using PledgeFormApp.Shared
+@inject HttpClient Http
+
+<h3>Installments</h3>
+@if (installmentsList == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <h3>List</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Pledger</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (PledgeFormApp.Shared.Installment installment in installmentsList)
+            {
+                <tr>
+                    <td>@installment.ID</td>
+                    <td>@installment.Date</td>
+                    <td>@installment.Amount</td>
+                    <td>@installment.Pledger</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+  private PledgeFormApp.Shared.Installment[] installmentsList;
+
+  [Inject]
+  Services.IInstallmentDataService InstallmentDataService { get; set; }
+
+  [Inject]
+  Services.IDonationDataService DonationDataService { get; set; }
+
+  protected override async Task OnInitializedAsync()
+  {
+      IEnumerable<Installment> list = await InstallmentDataService.GetAllInstallments();
+      installmentsList = list.ToArray();
+
+  }
+
+}
