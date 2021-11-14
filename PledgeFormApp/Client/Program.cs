@@ -22,6 +22,7 @@ namespace PledgeFormApp.Client
       builder.Services.AddScoped<IPledgerDataService, PledgerDataService>();
       builder.Services.AddScoped<IDonationDataService, DonationDataService>();
       builder.Services.AddScoped<IInstallmentDataService, InstallmentDataService>();
+      builder.Services.AddScoped<IEnvelopeDataService, EnvelopeDataService>();
 
       await builder.Build().RunAsync();
     }
