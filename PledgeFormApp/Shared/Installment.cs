@@ -14,6 +14,8 @@ namespace PledgeFormApp.Shared
     public int PledgerId { get; set; }
     public string Pledger { get; set; }
     public string QBName { get; set; }
+    public int EnvelopeNumber { get; set; }
+    public int Year { get; set; }
     public override string ToString()
     {
       return string.Format("{0} {1}", Date.Date, Pledger);

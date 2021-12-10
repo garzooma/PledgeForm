@@ -17,17 +17,19 @@ else
                 <th>Date</th>
                 <th>Amount</th>
                 <th>Pledger</th>
+                <th>Envelope</th>
             </tr>
         </thead>
         <tbody>
             @foreach (PledgeFormApp.Shared.Installment installment in installmentsList)
             {
-                <tr>
-                    <td>@installment.ID</td>
-                    <td>@installment.Date</td>
-                    <td>@installment.Amount</td>
-                    <td>@installment.Pledger</td>
-                </tr>
+            <tr>
+                <td>@installment.ID</td>
+                <td>@installment.Date</td>
+                <td>@installment.Amount</td>
+                <td>@installment.Pledger</td>
+                <td>@installment.EnvelopeNumber</td>
+            </tr>
             }
         </tbody>
     </table>

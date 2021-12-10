@@ -21,7 +21,7 @@ namespace PledgeFormApp.Server.Model
     {
       using (DbCommand cmd = Db.Connection.CreateCommand())
       {
-        cmd.CommandText = @"SELECT pd.id, pd.date, pd.amount, pd.pledger, p.name, p.qbName FROM pledgedonations pd JOIN pledgers p on p.id = pd.pledger";
+        cmd.CommandText = @"SELECT pd.id, pd.date, pd.amount, pd.pledger, p.name, p.qbName, ev.envelopeNum, ev.year FROM pledgedonations pd JOIN pledgers p on p.id = pd.pledger JOIN envelopes ev on ev.pledgerId = p.id";
         return await ReadAllAsync(await cmd.ExecuteReaderAsync());
       }
     }
@@ -43,7 +43,9 @@ namespace PledgeFormApp.Server.Model
               Amount = dbDataReader.GetInt32(2),
               PledgerId = dbDataReader.GetInt32(3),
               Pledger = dbDataReader.GetString(4),
-              QBName = dbDataReader.GetString(5)
+              QBName = dbDataReader.GetString(5),
+              EnvelopeNumber = dbDataReader.GetInt32(6),
+              Year = dbDataReader.GetInt32(7)
             };
             ret.Add(installment);
           }
@@ -63,9 +65,10 @@ namespace PledgeFormApp.Server.Model
       using (DbCommand cmd = Db.Connection.CreateCommand())
       {
         StringBuilder sb = new StringBuilder();
-        sb.Append(@"SELECT pd.id, pd.date, pd.amount, pd.pledger, p.name, p.qbName ");
+        sb.Append(@"SELECT pd.id, pd.date, pd.amount, pd.pledger, p.name, p.qbName, ev.envelopeNum, ev.year ");
         sb.Append(@"FROM pledgedonations pd ");
         sb.Append(@"JOIN pledgers p on p.id = pd.pledger ");
+        sb.Append(@"JOIN envelopes ev on ev.pledgerId = p.id ");
         sb.Append(@"WHERE pd.date = @date");
         cmd.CommandText = sb.ToString();
         DbParameter parm = cmd.CreateParameter();

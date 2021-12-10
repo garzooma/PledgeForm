@@ -46,6 +46,8 @@ namespace DBTests
 			cmd.ExecuteNonQuery();
 			cmd.CommandText = @"delete FROM pledgedonations";
 			cmd.ExecuteNonQuery();
+			cmd.CommandText = @"delete FROM envelopes";
+			cmd.ExecuteNonQuery();
 		  }
 
 		  using (DbCommand cmd = conn.CreateCommand())
@@ -59,6 +61,9 @@ namespace DBTests
 			  pledgerId = dbDataReader.GetInt32(0);
 			}
 			cmd.CommandText = string.Format("insert into pledgedonations (date, amount, pledger) values ('2021-08-14', '10', {0})", pledgerId);
+			cmd.ExecuteNonQuery();
+
+			cmd.CommandText = string.Format("INSERT INTO `envelopes` (`pledgerId`, `envelopeNum`, `year`) VALUES ({0}, 1, 2021)", pledgerId);
 			cmd.ExecuteNonQuery();
 		  }
 		}
@@ -92,6 +97,7 @@ namespace DBTests
 		  Assert.AreEqual(8, installment.Date.Month);
 		  Assert.AreEqual(10, installment.Amount);
 		  Assert.AreEqual(pledgerId, installment.PledgerId);
+		  Assert.AreEqual(2021, installment.Year);
 		}
 		catch (Exception excp)
 		{
@@ -107,27 +113,37 @@ namespace DBTests
 	  using (var db = new AppDb(TestConnectionString))
 	  {
 		await db.Connection.OpenAsync();
+		DateTime testDate = DateTime.Parse("2021-08-14");
 		InstallmentQuery query = new InstallmentQuery(db);
+		List<Installment> result;
 		try
 		{
-		  DateTime testDate = DateTime.Parse("2021-08-14");
-		  var result = await query.ReadAllAsyncByDate(testDate);
-		  Assert.IsNotNull(result);
-		  Assert.AreEqual(1, result.Count);
-		  Installment installment = result[0];
-		  Assert.AreEqual(8, installment.Date.Month);
-		  Assert.AreEqual(10, installment.Amount);
-		  Assert.AreEqual(pledgerId, installment.PledgerId);
-
-		  testDate = testDate.AddDays(1);
 		  result = await query.ReadAllAsyncByDate(testDate);
-		  Assert.IsNotNull(result);
-		  Assert.AreEqual(0, result.Count);
 		}
 		catch (Exception excp)
 		{
 		  Assert.Fail("Exception: " + excp.Message);
+		  throw;
 		}
+		Assert.IsNotNull(result);
+		Assert.AreEqual(1, result.Count);
+		Installment installment = result[0];
+		Assert.AreEqual(8, installment.Date.Month);
+		Assert.AreEqual(10, installment.Amount);
+		Assert.AreEqual(pledgerId, installment.PledgerId);
+
+		testDate = testDate.AddDays(1);
+        try 
+		{ 
+		  result = await query.ReadAllAsyncByDate(testDate);
+		}
+		catch (Exception excp)
+        {
+		  Assert.Fail("Exception: " + excp.Message);
+		  throw;
+		}
+		Assert.IsNotNull(result);
+		Assert.AreEqual(0, result.Count);
 	  }
 	}
 

@@ -23,7 +23,7 @@ namespace DBTests
     [TestMethod]
     public void TestFindAll()
     {
-      int pledgerId = DBTests.DonationQueryTest.initDB();
+      int pledgerId = DBTests.InstallmentQueryTest.initDB();
       InstallmentsRepository repository = new InstallmentsRepository(TestConnectionString);
       List<Installment> ret = repository.FindAll().ToList();
       Assert.IsNotNull(ret);

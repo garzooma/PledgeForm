@@ -5,6 +5,7 @@ using PledgeFormApp.Server.Controllers;
 using PledgeFormApp.Shared;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Test
 {
@@ -19,11 +20,11 @@ namespace Test
     }
 
     [TestMethod]
-    public async void TestRead()
+    public async Task TestRead()
     {
       PledgersController controller = new PledgersController(new TestRepository());
-      ActionResult<IEnumerable<Pledger>> result = await controller.Get();
-      List<Pledger> results = result.Value.ToList();
+      ActionResult<IEnumerable<Pledger>> result = await Task.Run(()=> controller.Get());
+      List<Pledger> results = (((OkObjectResult)result.Result).Value as IEnumerable<Pledger>).ToList();
       Assert.IsNotNull(results);
       Assert.AreEqual(1, results.ToList().Count);
       Pledger pledger = results.First();
