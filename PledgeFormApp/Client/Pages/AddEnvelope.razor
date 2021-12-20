@@ -1,0 +1,52 @@
+﻿@page "/addenvelope"
+@using PledgeFormApp.Shared
+@inject HttpClient Http
+
+<h3>AddEnvelope</h3>
+<EditForm Model=@envelope OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInvalidSubmit">
+    <div class="form-group">
+        <label for="Name">Pledger</label>
+        <InputNumber @bind-Value=envelope.PledgerId class="form-control" id="Id" />
+    </div>
+    <div class="form-group">
+        <label for="Age">Envelope Number</label>
+        <InputNumber @bind-Value=envelope.EnvelopeNum class="form-control" id="Number" />
+    </div>
+    <div class="form-group">
+        <label for="QBName">Year</label>
+        <InputNumber @bind-Value=envelope.Year class="form-control" id="Year" />
+    </div>
+    <input type="submit" class="btn btn-primary edit-btn" value="Save" />
+</EditForm>
+<div class="alert @StatusClass">@Message</div>
+
+@code {
+
+  [Inject]
+  Services.IEnvelopeDataService EnvelopeDataService { get; set; }
+  Envelope envelope;
+
+  protected string Message = string.Empty;
+  protected string StatusClass = string.Empty;
+
+  protected override async Task OnInitializedAsync()
+  {
+      envelope = new Envelope();
+      await Task.CompletedTask;
+  }
+
+
+  protected async Task HandleValidSubmit()
+  {
+      await EnvelopeDataService.AddEnvelope(envelope);
+      StatusClass = "alert-success";
+      Message = "New Envelope submitted.";
+  }
+
+
+  protected void HandleInvalidSubmit()
+  {
+      StatusClass = "alert-danger";
+      Message = "There are some validation errors.  Please try again.";
+  }
+}

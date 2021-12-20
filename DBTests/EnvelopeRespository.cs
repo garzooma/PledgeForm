@@ -33,5 +33,48 @@ namespace DBTests
       Assert.AreEqual(1, envelope.EnvelopeNum);
       Assert.AreEqual(pledgerId, envelope.PledgerId);
     }
+
+    [TestMethod]
+    public void TestCreate()
+    {
+      Tuple<int, int> result = DBTests.EnvelopeQueryTest.initDB();
+      int pledgerId = result.Item1;
+      EnvelopesRepository repository = new EnvelopesRepository(TestConnectionString);
+      List<Envelope> ret = repository.FindAll().ToList();
+      Assert.IsNotNull(ret);
+      Assert.AreEqual(1, ret.Count);
+
+      PledgersRepository pledgerRepository = new PledgersRepository(TestConnectionString);
+      Pledger newPledger = new Pledger()
+      {
+        Name = "New Pledger",
+        Amount = 234,
+        QBName = "New QBName"
+      };
+      pledgerRepository.Create(newPledger);
+      List<Pledger> pledgerList = pledgerRepository.FindAll().ToList();
+      Assert.IsNotNull(pledgerList);
+      Assert.AreEqual(3, pledgerList.Count);
+      Pledger testPledger = pledgerList.FirstOrDefault(p => p.Name == newPledger.Name);
+      Assert.IsNotNull(testPledger);
+
+      Envelope newEnvelope = new Envelope()
+      {
+        EnvelopeNum = 2,
+        PledgerId = testPledger.ID,
+        Year = 2021
+      };
+
+      repository.Create(newEnvelope);
+      List<Envelope> envelopeList = repository.FindAll().ToList();
+      Assert.AreEqual(2, envelopeList.Count);
+      Envelope testEnvelope = envelopeList.FirstOrDefault(e => e.EnvelopeNum == 2);
+      Assert.IsNotNull(testEnvelope);
+      Assert.AreEqual(newEnvelope.PledgerId, testEnvelope.PledgerId);
+      Assert.AreEqual(newEnvelope.EnvelopeNum, testEnvelope.EnvelopeNum);
+      Assert.AreEqual(newEnvelope.Year, testEnvelope.Year);
+
+      return;
+    }
   }
 }

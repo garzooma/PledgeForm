@@ -4,6 +4,7 @@
 
 <h1 class="page-title">Envelopes List</h1> 
 
+<button @onclick="AddPledger">Add Envelope</button>
 
 @if (envelopesList == null)
 {
@@ -39,10 +40,17 @@ else {
   [Inject]
   Services.IEnvelopeDataService EnvelopeDataService { get; set; }
 
+  [Inject]
+  public NavigationManager NavigationManager { get; set; }
+
   protected override async Task OnInitializedAsync()
   {
-      //pledgerList = await Http.GetFromJsonAsync<Pledger[]>("Pledgers");
       IEnumerable<Envelope> list = await EnvelopeDataService.GetAllEnvelopes();
       envelopesList = list.ToArray();
+  }
+
+  protected async Task AddPledger()
+  {
+      await Task.Run(() => { NavigationManager.NavigateTo("/addenvelope"); });
   }
 }

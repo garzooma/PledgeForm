@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -16,9 +17,16 @@ namespace PledgeFormApp.Client.Services
       _client = client;
     }
     
-    public Task AddEnvelope(Envelope envelope)
+    public async Task AddEnvelope(Envelope envelope)
     {
-      throw new NotImplementedException();
+      HttpResponseMessage response = await _client.PostAsJsonAsync<Envelope>("/envelopes/create", envelope);
+      string content = await response.Content.ReadAsStringAsync();
+      if (!response.IsSuccessStatusCode)
+      {
+        throw new ApplicationException(content);
+      }
+      Envelope retVal = JsonSerializer.Deserialize<Envelope>(content, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+      return;
     }
 
     public Task DeleteEnvelope(int envelopeId)

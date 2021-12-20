@@ -32,6 +32,21 @@ namespace PledgeFormApp.Server.Controllers
       }
     }
 
+    // GET: PledgersController/Create
+    [HttpPost("create")]
+    public async Task<ActionResult<Envelope>> Create([FromBody] Envelope envelope)
+    {
+      try
+      {
+        int id = _repository.Create(envelope);
+        return Ok(await Task.Run(() => _repository.FindByIndex(id)));
+      }
+      catch (Exception ex)
+      {
+        return StatusCode(StatusCodes.Status500InternalServerError, ex);
+      }
+    }
+
     public IActionResult Index()
     {
       return View();

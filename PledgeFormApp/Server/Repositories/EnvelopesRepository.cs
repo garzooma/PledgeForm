@@ -54,7 +54,15 @@ namespace PledgeFormApp.Server
 
     public Envelope FindByIndex(int index)
     {
-      throw new NotImplementedException();
+      using (var db = new AppDb(_connectionString))
+      {
+        Task open = db.Connection.OpenAsync();
+        open.Wait();
+        var query = new Model.EnvelopeQuery(db);
+        var result = query.ReadByIndexAsync(index);
+        result.Wait();
+        return result.Result;
+      }
     }
 
     public void Update(Envelope entity)

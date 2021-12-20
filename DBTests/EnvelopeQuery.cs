@@ -111,6 +111,38 @@ namespace DBTests
 		}
 
 		[TestMethod]
+		public async Task TestReadByIndex()
+		{
+			Tuple<int, int> intRet = initDB();
+			int pledgerId = intRet.Item1;
+			using (var db = new AppDb(TestConnectionString))
+			{
+				await db.Connection.OpenAsync();
+				EnvelopeQuery query = new EnvelopeQuery(db);
+				try
+				{
+					var result = await query.ReadAllAsync();
+					Assert.IsNotNull(result);
+					Assert.AreEqual(1, result.Count);
+					Envelope envelope = result[0];
+					Assert.AreEqual(pledgerId, envelope.PledgerId);
+					Assert.AreEqual(1, envelope.EnvelopeNum);
+					Assert.AreEqual(2021, envelope.Year);
+
+					int index = Envelope.GetIndex(envelope.Year, envelope.EnvelopeNum);
+					Envelope retEnvelope = await query.ReadByIndexAsync(index);
+					Assert.AreEqual(envelope.PledgerId, retEnvelope.PledgerId);
+					Assert.AreEqual(envelope.EnvelopeNum, retEnvelope.EnvelopeNum);
+					Assert.AreEqual(envelope.Year, retEnvelope.Year);
+				}
+				catch (Exception excp)
+				{
+					Assert.Fail("Exception: " + excp.Message);
+				}
+			}
+		}
+
+		[TestMethod]
 		public async Task TestInsert()
 		{
 			Tuple<int, int> pledgersList = initDB();

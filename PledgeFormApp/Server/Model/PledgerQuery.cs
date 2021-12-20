@@ -90,6 +90,7 @@ namespace PledgeFormApp.Server.Model
       BindId(cmd, id);
       await cmd.ExecuteNonQueryAsync();
     }
+
     private void BindId(MySqlCommand cmd, int Id)
     {
       cmd.Parameters.Add(new MySqlParameter

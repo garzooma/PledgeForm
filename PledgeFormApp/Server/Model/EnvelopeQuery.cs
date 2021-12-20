@@ -53,14 +53,44 @@ namespace PledgeFormApp.Server.Model
       return ret;
     }
 
+    public async Task<Envelope> ReadByIndexAsync(int index)
+    {
+      int num = Envelope.GetEnvelopeNum(index);
+      int year = Envelope.GetYear(index);
+      using (var cmd = Db.Connection.CreateCommand())
+      {
+        cmd.CommandText = @"SELECT pledgerId, envelopeNum, year FROM envelopes WHERE envelopeNum = @envelopeNum AND year = @year";
+        BindId(cmd, num, year);
+        List<Envelope> envelopesList = await ReadAllAsync(await cmd.ExecuteReaderAsync());
+        return envelopesList.FirstOrDefault();
+      }
+    }
+
     public async Task<int> InsertAsync(Envelope envelope)
     {
       using var cmd = Db.Connection.CreateCommand();
       cmd.CommandText = @"INSERT INTO `envelopes` (`pledgerId`, `envelopeNum`, `year`) VALUES (@pledgerId, @envelopeNum, @year);";
       BindParams(cmd, envelope);
       await cmd.ExecuteNonQueryAsync();
-      int Id = (int)cmd.LastInsertedId;
+      //int Id = (int)cmd.LastInsertedId;
+      int Id = Envelope.GetIndex(envelope.Year, envelope.EnvelopeNum);
       return Id;
+    }
+
+    private void BindId(MySqlCommand cmd, int num, int year)
+    {
+      cmd.Parameters.Add(new MySqlParameter
+      {
+        ParameterName = "@envelopeNum",
+        DbType = System.Data.DbType.Int32,
+        Value = num,
+      });
+      cmd.Parameters.Add(new MySqlParameter
+      {
+        ParameterName = "@year",
+        DbType = System.Data.DbType.Int32,
+        Value = year,
+      });
     }
 
     private void BindParams(MySqlCommand cmd, Envelope envelope)
