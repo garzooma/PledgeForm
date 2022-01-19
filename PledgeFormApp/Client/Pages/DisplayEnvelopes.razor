@@ -1,0 +1,57 @@
+﻿@page "/displayenvelopespage"
+@using PledgeFormApp.Shared
+@inject HttpClient Http
+
+<h1 class="page-title">Envelopes List</h1>
+
+<button @onclick="AddEnvelope">Add Envelope</button>
+
+@if (envelopesList == null)
+{
+
+}
+else
+{
+    <h3>List</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Pledger</th>
+                <th>Number</th>
+                <th>Year</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (DisplayEnvelope envelope in envelopesList)
+            {
+                <tr>
+                    <td>@envelope.Pledger.Name</td>
+                    <td>@envelope.EnvelopeNum</td>
+                    <td>@envelope.Year</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+
+  private DisplayEnvelope[] envelopesList;
+
+  [Inject]
+  Services.IDisplayEnvelopeDataService DisplayEnvelopeDataService { get; set; }
+
+  [Inject]
+  public NavigationManager NavigationManager { get; set; }
+
+  protected override async Task OnInitializedAsync()
+  {
+      IEnumerable<DisplayEnvelope> list = await DisplayEnvelopeDataService.GetAllEnvelopes();
+      envelopesList = list.ToArray();
+  }
+
+  protected async Task AddEnvelope()
+  {
+      await Task.Run(() => { NavigationManager.NavigateTo("/addenvelope"); });
+  }
+}

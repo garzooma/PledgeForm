@@ -30,6 +30,7 @@ namespace PledgeFormApp.Server
       services.AddScoped<IDonationsRepository, DonationsRepository>();
       services.AddScoped<IInstallmentsRepository, InstallmentsRepository>();
       services.AddScoped<IEnvelopesRepository, EnvelopesRepository>();
+      services.AddScoped<IDisplayEnvelopesRepository, DisplayEnvelopesRepository>();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
