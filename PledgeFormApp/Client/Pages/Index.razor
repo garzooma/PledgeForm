@@ -38,23 +38,18 @@ A web application for entering church pledge donations
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-2"/>
-            <div class="col-lg-3">
+            <div class="col-lg-5"/>
+            <div class="col-lg-6">
                 <label for="Amount">Amount $</label>
-            </div>
-            <div class="col-lg-3">
-                <InputNumber @bind-Value="exampleModel.Amount" id="Amount"/>
-            </div>
-            <div class="col-lg-4">
+                <InputNumber style="width: 100px;" @bind-Value="exampleModel.Amount" id="Amount" width="30"/>
                 <button class="btn btn-success" @onclick="Record">Record</button>
             </div>
         </div>
         <div class="row">
+            <div class="col-lg-5" />
             <div class="col-lg-3">
                 <label for="Amount">Name</label>
-            </div>
-            <div class="col-lg-7">
-                <label id="Amount">@exampleModel.Pledger</label>
+                <label id="Amount" class="border border-primary">@exampleModel.Pledger</label>
             </div>
         </div>
     </div>
