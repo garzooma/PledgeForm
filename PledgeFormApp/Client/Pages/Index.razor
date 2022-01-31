@@ -1,6 +1,79 @@
 ﻿@page "/"
+@using PledgeFormApp.Shared
 
-<h1>PledgeForm</h1>
+<link href="Index.razor.css" rel="stylesheet" />
+
+<h1 class="align-content-center">PledgeForm</h1>
 
 A web application for entering church pledge donations
 
+<EditForm Model=@exampleModel>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-7" align="center">
+                <label class="top-label" for="Date">Pledger</label>
+            </div>
+            <div class="col-lg-5 top-label" align="center">
+                <label class="top-label" for="Id">Id</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-7" align="center">
+                <InputDate @bind-Value="exampleModel.Date" id="Date" />
+            </div>
+            <div class="col-lg-5" align="center">
+                <InputNumber @bind-Value="exampleModel.EnvelopeNumber" id="Id" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-7" align="center">
+            </div>
+            <div class="col-lg-5" align="center">
+                <button class="btn btn-primary" @onclick="ShowPledger">Show</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12" align="center">
+                <img src="images/church.png" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-2"/>
+            <div class="col-lg-3">
+                <label for="Amount">Amount $</label>
+            </div>
+            <div class="col-lg-3">
+                <InputNumber @bind-Value="exampleModel.Amount" id="Amount"/>
+            </div>
+            <div class="col-lg-4">
+                <button class="btn btn-success" @onclick="Record">Record</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-3">
+                <label for="Amount">Name</label>
+            </div>
+            <div class="col-lg-7">
+                <label id="Amount">@exampleModel.Pledger</label>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+
+  private Installment exampleModel = new Installment() { 
+    Pledger = "Fred Flinstone",
+    Amount = 10,
+    EnvelopeNumber = 12
+  };
+
+  private void ShowPledger()
+  {
+  }
+
+  private void Record()
+  {
+  }
+
+}

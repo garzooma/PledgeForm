@@ -26,4 +26,8 @@
     <_ContentIncludedByDefault Remove="Pages\AddEnvelope.razor" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\images\" />
+  </ItemGroup>
+
 </Project>

@@ -1,0 +1,24 @@
+﻿h1 {
+    color: red;
+    font-style: italic;
+    text-shadow: 2px 2px 2px gray;
+    text-align: center;
+}
+
+/* Some custom styles to beautify this example */
+.demo-content {
+    padding: 15px;
+    font-size: 18px;
+    background: #dbdfe5;
+    margin-bottom: 15px;
+    color: green;
+}
+
+.demo-content.bg-alt {
+    background: yellow;
+}
+
+.top-label {
+    color: red;
+}
+

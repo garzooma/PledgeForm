@@ -2,7 +2,19 @@
 @using PledgeFormApp.Shared
 @inject HttpClient Http
 
-<h3>AddEnvelope</h3>
+<h1>CSS EXample</h1>
+
+<div class="col-12 style1">
+    <p>Applying Style 1</p>
+</div>
+<div class="col-12 style2">
+    <p>Applying Style 2</p>
+</div>
+<div class="col-12 style3">
+    <p>Applying Style 3</p>
+</div>
+
+<h3>Add Envelope</h3>
 
 @if (pledgerList == null)
 {
@@ -13,16 +25,16 @@ else
 
     <EditForm Model=@envelope OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInvalidSubmit">
         <div class="form-group">
-            <label for="Name">Pledger</label>
+            <label class="enter-label" for="Name">Pledger</label>
             <!--
                 <InputNumber @bind-Value=envelope.PledgerId class="form-control" id="Id" />
             -->
             <InputSelect @bind-Value=envelope.PledgerId class="form-control" id="Id" style="width: 150px">
                 @{
-                  foreach (var value in pledgerList)
-                  {
+                        foreach (var value in pledgerList)
+                        {
                         <option value="@value.ID">@value.Name</option>
-                  }
+                        }
                 }
             </InputSelect>
         </div>
@@ -39,15 +51,15 @@ else
     <div class="alert @StatusClass">@Message</div>
 }
 
-    @code {
+@code {
 
-        [Inject]
-        Services.IEnvelopeDataService EnvelopeDataService { get; set; }
-        Envelope envelope;
+    [Inject]
+    Services.IEnvelopeDataService EnvelopeDataService { get; set; }
+    Envelope envelope;
 
-        [Inject]
-        Services.IPledgerDataService PledgerDataService { get; set; }
-private IEnumerable<Pledger> pledgerList;
+    [Inject]
+    Services.IPledgerDataService PledgerDataService { get; set; }
+    private IEnumerable<Pledger> pledgerList;
 
     protected string Message = string.Empty;
     protected string StatusClass = string.Empty;
@@ -73,4 +85,4 @@ private IEnumerable<Pledger> pledgerList;
         StatusClass = "alert-danger";
         Message = "There are some validation errors.  Please try again.";
     }
-    }
+}

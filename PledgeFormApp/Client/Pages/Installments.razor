@@ -9,46 +9,56 @@
 }
 else
 {
+    <h3>Enter pledge donation</h3>
+    <EditForm Model="@inputInstallment">
+        <div class="form-group">
+            <label for="Date">Date:</label>
+            <InputDate @bind-Value="inputInstallment.Date" class="form-control" id="Date" />
+        </div>
+    </EditForm>       
     <h3>List</h3>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Date</th>
-                <th>Amount</th>
-                <th>Pledger</th>
-                <th>Envelope</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (PledgeFormApp.Shared.Installment installment in installmentsList)
-            {
-            <tr>
-                <td>@installment.ID</td>
-                <td>@installment.Date</td>
-                <td>@installment.Amount</td>
-                <td>@installment.Pledger</td>
-                <td>@installment.EnvelopeNumber</td>
-            </tr>
-            }
-        </tbody>
-    </table>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>Pledger</th>
+                    <th>Envelope</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (PledgeFormApp.Shared.Installment installment in installmentsList)
+                {
+                    <tr>
+                        <td>@installment.ID</td>
+                        <td>@installment.Date</td>
+                        <td>@installment.Amount</td>
+                        <td>@installment.Pledger</td>
+                        <td>@installment.EnvelopeNumber</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
 }
 
 @code {
-  private PledgeFormApp.Shared.Installment[] installmentsList;
+    private PledgeFormApp.Shared.Installment[] installmentsList;
 
-  [Inject]
-  Services.IInstallmentDataService InstallmentDataService { get; set; }
+    private PledgeFormApp.Shared.Installment inputInstallment = new Installment() { Date = DateTime.Today };
 
-  [Inject]
-  Services.IDonationDataService DonationDataService { get; set; }
+    [Inject]
+    Services.IInstallmentDataService InstallmentDataService { get; set; }
 
-  protected override async Task OnInitializedAsync()
-  {
-      IEnumerable<Installment> list = await InstallmentDataService.GetAllInstallments();
-      installmentsList = list.ToArray();
+    [Inject]
+    Services.IDonationDataService DonationDataService { get; set; }
 
-  }
+    protected override async Task OnInitializedAsync()
+    {
+        IEnumerable<Installment> list = await InstallmentDataService.GetAllInstallments();
+        installmentsList = list.ToArray();
+
+    }
 
 }
