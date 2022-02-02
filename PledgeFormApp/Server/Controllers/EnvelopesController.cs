@@ -32,6 +32,19 @@ namespace PledgeFormApp.Server.Controllers
       }
     }
 
+    //[HttpGet("{year}/{num")]
+    //public async Task<ActionResult<IEnumerable<Envelope>>> Find(int year, int num)
+    //{
+    //  try
+    //  {
+    //    return Ok(await Task.Run(() => _repository.FindAll()));
+    //  }
+    //  catch (Exception excp)
+    //  {
+    //    return StatusCode(StatusCodes.Status500InternalServerError, excp);
+    //  }
+    //}
+
     // GET: PledgersController/Create
     [HttpPost("create")]
     public async Task<ActionResult<Envelope>> Create([FromBody] Envelope envelope)

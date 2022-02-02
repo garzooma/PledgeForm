@@ -53,6 +53,11 @@ namespace PledgeFormApp.Server.Model
       return ret;
     }
 
+    /// <summary>
+    /// Get envelope by "index", i.e. combined num/year
+    /// </summary>
+    /// <param name="index"></param>
+    /// <returns></returns>
     public async Task<Envelope> ReadByIndexAsync(int index)
     {
       int num = Envelope.GetEnvelopeNum(index);
@@ -68,12 +73,14 @@ namespace PledgeFormApp.Server.Model
 
     public async Task<int> InsertAsync(Envelope envelope)
     {
-      using var cmd = Db.Connection.CreateCommand();
-      cmd.CommandText = @"INSERT INTO `envelopes` (`pledgerId`, `envelopeNum`, `year`) VALUES (@pledgerId, @envelopeNum, @year);";
-      BindParams(cmd, envelope);
-      await cmd.ExecuteNonQueryAsync();
-      //int Id = (int)cmd.LastInsertedId;
-      int Id = Envelope.GetIndex(envelope.Year, envelope.EnvelopeNum);
+      int Id = 0;
+      using (var cmd = Db.Connection.CreateCommand()) { 
+        cmd.CommandText = @"INSERT INTO `envelopes` (`pledgerId`, `envelopeNum`, `year`) VALUES (@pledgerId, @envelopeNum, @year);";
+        BindParams(cmd, envelope);
+        await cmd.ExecuteNonQueryAsync();
+        //int Id = (int)cmd.LastInsertedId;
+        Id = Envelope.GetIndex(envelope.Year, envelope.EnvelopeNum);
+      }
       return Id;
     }
 
