@@ -47,9 +47,17 @@ namespace PledgeFormApp.Client.Services
       return envelopeList;
     }
 
-    public Task<DisplayEnvelope> GetEnvelopeDetails(int envelopeId)
+    public async Task<DisplayEnvelope> GetEnvelopeDetails(int envelopeId)
     {
-      throw new NotImplementedException();
+      HttpResponseMessage response = await _client.GetAsync("DisplayEnvelopes");
+      string content = await response.Content.ReadAsStringAsync();
+      if (!response.IsSuccessStatusCode)
+      {
+        throw new ApplicationException(content);
+      }
+
+      DisplayEnvelope envelope = JsonSerializer.Deserialize<DisplayEnvelope>(content, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+      return envelope;
     }
   }
 }

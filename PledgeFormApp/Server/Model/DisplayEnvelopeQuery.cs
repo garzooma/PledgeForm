@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
+using MySqlConnector;
 using PledgeFormApp.Shared;
 
 namespace PledgeFormApp.Server.Model
@@ -66,5 +67,33 @@ namespace PledgeFormApp.Server.Model
       return ret;
     }
 
+    public async Task<DisplayEnvelope> ReadByIndexAsync(int index)
+    {
+      int num = Envelope.GetEnvelopeNum(index);
+      int year = Envelope.GetYear(index);
+      using (var cmd = Db.Connection.CreateCommand())
+      {
+        cmd.CommandText = @"SELECT e.pledgerId, e.envelopeNum, e.year, p.name, p.weeklyAmount, p.qbName FROM envelopes e join pledgers p on p.id = e.pledgerId WHERE envelopeNum = @envelopeNum AND year = @year";
+        BindId(cmd, num, year);
+        List<DisplayEnvelope> envelopesList = await ReadAllAsync(await cmd.ExecuteReaderAsync());
+        return envelopesList.FirstOrDefault();
+      }
+    }
+
+    private void BindId(MySqlCommand cmd, int num, int year)
+    {
+      cmd.Parameters.Add(new MySqlParameter
+      {
+        ParameterName = "@envelopeNum",
+        DbType = System.Data.DbType.Int32,
+        Value = num,
+      });
+      cmd.Parameters.Add(new MySqlParameter
+      {
+        ParameterName = "@year",
+        DbType = System.Data.DbType.Int32,
+        Value = year,
+      });
+    }
   }
 }

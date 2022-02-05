@@ -25,10 +25,9 @@ namespace DBTests
 			return;
 		}
 
-		public static Tuple<int, int> initDB()
+		public static int initDB()
 		{
 			int pledgerId = -1;
-			int pledgerId2 = -1;
 			string[] connParts = TestConnectionString.Split(";");
 			string[] dbParts = connParts[4].Split("=");
 			string dbName = dbParts[1];
@@ -64,11 +63,11 @@ namespace DBTests
 							{
 								string name = dbDataReader.GetString(1);
 								if (name == "test name") pledgerId = dbDataReader.GetInt32(0);
-								if (name == "test name2") pledgerId2 = dbDataReader.GetInt32(0);
+								//if (name == "test name2") pledgerId2 = dbDataReader.GetInt32(0);
 							}
 						}
-						cmd.CommandText = string.Format("insert into pledgedonations (date, amount, pledger) values ('2021-08-14', '10', {0})", pledgerId);
-						cmd.ExecuteNonQuery();
+						//cmd.CommandText = string.Format("insert into pledgedonations (date, amount, pledger) values ('2021-08-14', '10', {0})", pledgerId);
+						//cmd.ExecuteNonQuery();
 						cmd.CommandText = string.Format("INSERT INTO `envelopes` (`pledgerId`, `envelopeNum`, `year`) VALUES ({0}, 1, 2021)", pledgerId);
 						cmd.ExecuteNonQuery();
 					}
@@ -83,13 +82,13 @@ namespace DBTests
 				}
 			}
 
-			return new Tuple<int, int>(pledgerId, pledgerId2);
+			return pledgerId;
 		}
 
 		[TestMethod]
 		public async Task TestRead()
 		{
-			int pledgerId = initDB().Item1;
+			int pledgerId = initDB();
 			using (var db = new AppDb(TestConnectionString))
 			{
 				await db.Connection.OpenAsync();
@@ -100,6 +99,35 @@ namespace DBTests
 					Assert.IsNotNull(result);
 					Assert.AreEqual(1, result.Count);
 					DisplayEnvelope envelope = result[0];
+					Assert.AreEqual(pledgerId, envelope.PledgerId);
+					Assert.AreEqual(1, envelope.EnvelopeNum);
+					Assert.AreEqual(2021, envelope.Year);
+					Assert.AreEqual("test name", envelope.Pledger.Name);
+					Assert.AreEqual(123, envelope.Pledger.Amount);
+					Assert.AreEqual("qbtest", envelope.Pledger.QBName);
+				}
+				catch (Exception excp)
+				{
+					Assert.Fail("Exception: " + excp.Message);
+				}
+			}
+		}
+
+		[TestMethod]
+		public async Task TestReadById()
+		{
+			int pledgerId = initDB();
+			using (var db = new AppDb(TestConnectionString))
+			{
+				await db.Connection.OpenAsync();
+				DisplayEnvelopeQuery query = new DisplayEnvelopeQuery(db);
+				try
+				{
+					int envelopeNum = 1;
+					int year = 2021;
+					int id = Envelope.GetIndex(year, envelopeNum);
+					DisplayEnvelope envelope = await query.ReadByIndexAsync(id);
+					Assert.IsNotNull(envelope);
 					Assert.AreEqual(pledgerId, envelope.PledgerId);
 					Assert.AreEqual(1, envelope.EnvelopeNum);
 					Assert.AreEqual(2021, envelope.Year);
