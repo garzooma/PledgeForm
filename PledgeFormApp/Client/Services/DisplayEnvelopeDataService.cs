@@ -1,4 +1,5 @@
-﻿using PledgeFormApp.Shared;
+﻿using Microsoft.AspNetCore.Components;
+using PledgeFormApp.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,11 +13,13 @@ namespace PledgeFormApp.Client.Services
   public class DisplayEnvelopeDataService : IDisplayEnvelopeDataService
   {
     private readonly HttpClient _client;
-    public DisplayEnvelopeDataService(HttpClient client)
+    private readonly NavigationManager _navMgr;
+    public DisplayEnvelopeDataService(HttpClient client, NavigationManager navigationManager)
     {
       _client = client;
+      _navMgr = navigationManager;
     }
-    
+
     public async Task AddEnvelope(DisplayEnvelope envelope)
     {
       HttpResponseMessage response = await _client.PostAsJsonAsync<DisplayEnvelope>("/displayenvelopes/create", envelope);
@@ -56,6 +59,24 @@ namespace PledgeFormApp.Client.Services
         throw new ApplicationException(content);
       }
 
+      DisplayEnvelope envelope = JsonSerializer.Deserialize<DisplayEnvelope>(content, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+      return envelope;
+    }
+
+    public async Task<DisplayEnvelope> GetEnvelopeDetails(int year, int envelopeNum)
+    {
+      HttpResponseMessage response = await _client.GetAsync($"DisplayEnvelopes/{year}/{envelopeNum}");
+      //response.EnsureSuccessStatusCode();
+      if (!response.IsSuccessStatusCode)
+      {
+        //if (response.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+        //{
+        //  _navMgr.NavigateTo("/500");
+        //}
+        //throw new ApplicationException($"Couldn't get envelope '{envelopeNum}' for year '{year}'; Reason: {response.ReasonPhrase}");
+        return null;
+      }
+      string content = await response.Content.ReadAsStringAsync();
       DisplayEnvelope envelope = JsonSerializer.Deserialize<DisplayEnvelope>(content, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
       return envelope;
     }

@@ -1,5 +1,5 @@
 {
   "Data": {
-    "ConnectionString": "server=localhost;user id=sts.varts;password=sts.varts;port=3306;database=stsvarts;"
+    "ConnectionString": "server=localhost;user id=sts.varts;password=sts.varts;port=3306;database=teststsvarts;"
   }
 }

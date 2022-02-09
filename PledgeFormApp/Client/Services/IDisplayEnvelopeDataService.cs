@@ -10,6 +10,7 @@ namespace PledgeFormApp.Client.Services
   {
     Task<IEnumerable<DisplayEnvelope>> GetAllEnvelopes();
     Task<DisplayEnvelope> GetEnvelopeDetails(int envelopeId);
+    Task<DisplayEnvelope> GetEnvelopeDetails(int year, int envelopeNum);
     Task AddEnvelope(DisplayEnvelope envelope);
     Task DeleteEnvelope(int envelopeId);
   }

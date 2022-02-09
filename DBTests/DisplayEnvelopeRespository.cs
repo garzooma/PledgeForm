@@ -34,6 +34,25 @@ namespace DBTests
       Assert.AreEqual(pledgerId, envelope.PledgerId);
     }
 
+
+    [TestMethod]
+    public void TestFindByIndex()
+    {
+      Tuple<int, int> result = DBTests.EnvelopeQueryTest.initDB();
+      int pledgerId = result.Item1;
+      DisplayEnvelopesRepository repository = new DisplayEnvelopesRepository(TestConnectionString);
+      List<DisplayEnvelope> ret = repository.FindAll().ToList();
+      Assert.IsNotNull(ret);
+      Assert.AreEqual(1, ret.Count);
+      DisplayEnvelope envelope = ret[0];
+      Assert.AreEqual("test name", envelope.Pledger.Name);
+      int year = 2021;
+      int envelopeNum = 1;
+      DisplayEnvelope retEnvelope = repository.FindByIndex(Envelope.GetIndex(year, envelopeNum));
+      Assert.IsNotNull(retEnvelope);
+      Assert.AreEqual(envelope.Pledger.Name, retEnvelope.Pledger.Name);
+    }
+
     //[TestMethod]
     //public void TestCreate()
     //{

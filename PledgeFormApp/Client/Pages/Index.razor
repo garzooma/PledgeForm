@@ -25,8 +25,10 @@ A web application for entering church pledge donations
                 <InputNumber style="width: 60px;" @bind-Value="installment.EnvelopeNumber" id="Id"/>
             </div>
         </div>
-        <div style="margin: 5px" class="row top-buffer">
-            <div class="col-lg-7" align="center">
+        <div class="row top-buffer">
+            <div class="col-lg-2"/>
+            <div class="col-lg-5" align="right" style="color: red; font-style: italic">
+                @message
             </div>
             <div class="col-lg-5" align="center">
                 <button class="btn btn-primary" @onclick="ShowPledger">Show</button>
@@ -46,9 +48,8 @@ A web application for entering church pledge donations
             </div>
         </div>
         <div style="margin: 5px" class="row top-buffer">
-            <div class="col-lg-4" />
-            <div class="col-lg-6">
-
+            <div class="col-lg-3" />
+            <div class="col-lg-9">
                 <label for="Amount">Name</label>
                 <label style="width: 200px;" id="Amount" class="border border-primary px-1">@installment.Pledger</label>
             </div>
@@ -63,27 +64,50 @@ A web application for entering church pledge donations
   [Inject]
   Services.IDisplayEnvelopeDataService DisplayEnvelopeDataService { get; set; }
 
+  [Inject]
+  Services.IDonationDataService DonationDataService { get; set; }
+
   private Installment installment = new Installment() {
       Date = DateTime.Today,
-      Year = 2022
+      Year = 2022,
+      Pledger = "Name goes here"
   };
+
+  private string message;
 
   private async void ShowPledger()
   {
+      message = "";
       int envelopeNum = installment.EnvelopeNumber;
       int id = Envelope.GetIndex(2022, envelopeNum);
-      DisplayEnvelope envelope = await DisplayEnvelopeDataService.GetEnvelopeDetails(id);
-      installment = new Installment()
+      DisplayEnvelope envelope = await DisplayEnvelopeDataService.GetEnvelopeDetails(2022, envelopeNum);
+      if (envelope == null)
       {
-          EnvelopeNumber = envelopeNum,
-          Date = installment.Date,
-          Amount = envelope.Pledger.Amount,
-          Year = installment.Year
-      };
+          message = $"Couldn't find record for envelope number {envelopeNum}";
+      }
+      else {
+          installment = new Installment()
+          {
+              EnvelopeNumber = envelopeNum,
+              Date = installment.Date,
+              Amount = envelope.Pledger.Amount,
+              Year = installment.Year,
+              Pledger = envelope.Pledger.Name,
+              PledgerId = envelope.Pledger.ID
+          };
+      }
+      StateHasChanged();
   }
 
   private void Record()
   {
+      Donation donation = new Donation()
+      {
+          Amount = installment.Amount,
+          Date = installment.Date,
+          PledgerId = installment.PledgerId
+      };
+      DonationDataService.AddDonation(donation);
   }
 
 }

@@ -39,6 +39,12 @@ namespace PledgeFormApp.Server
       throw new NotImplementedException();
     }
 
+    public DisplayEnvelope Find(int year, int envelopeNum)
+    {
+      int idx = Envelope.GetIndex(year, envelopeNum);
+      return FindByIndex(idx);
+    }
+
     public IEnumerable<DisplayEnvelope> FindAll()
     {
       using (var db = new AppDb(_connectionString))
@@ -52,18 +58,17 @@ namespace PledgeFormApp.Server
       }
     }
 
-    public Envelope FindByIndex(int index)
+    public DisplayEnvelope FindByIndex(int index)
     {
-      throw new NotImplementedException();
-      //using (var db = new AppDb(_connectionString))
-      //{
-      //  Task open = db.Connection.OpenAsync();
-      //  open.Wait();
-      //  var query = new Model.DisplayEnvelopeQuery(db);
-      //  var result = query.ReadByIndexAsync(index);
-      //  result.Wait();
-      //  return result.Result;
-      //}
+      using (var db = new AppDb(_connectionString))
+      {
+        Task open = db.Connection.OpenAsync();
+        open.Wait();
+        var query = new Model.DisplayEnvelopeQuery(db);
+        var result = query.ReadByIndexAsync(index);
+        result.Wait();
+        return result.Result;
+      }
     }
 
 

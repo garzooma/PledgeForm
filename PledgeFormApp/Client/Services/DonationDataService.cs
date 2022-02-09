@@ -1,4 +1,5 @@
-﻿using PledgeFormApp.Shared;
+﻿using Microsoft.AspNetCore.Components;
+using PledgeFormApp.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,9 +13,11 @@ namespace PledgeFormApp.Client.Services
   public class DonationDataService : IDonationDataService
   {
     private readonly HttpClient _client;
-    public DonationDataService(HttpClient client)
+    private readonly NavigationManager _navMgr;
+    public DonationDataService(HttpClient client, NavigationManager navigationManager)
     {
       _client = client;
+      _navMgr = navigationManager;
     }
 
     public async Task AddDonation(Donation donation)

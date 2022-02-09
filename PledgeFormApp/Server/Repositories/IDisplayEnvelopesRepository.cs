@@ -8,5 +8,6 @@ namespace PledgeFormApp.Server
 {
   public interface IDisplayEnvelopesRepository : IRepositoryBase<DisplayEnvelope>
   {
+    DisplayEnvelope Find(int year, int envelopeNum);
   }
 }
