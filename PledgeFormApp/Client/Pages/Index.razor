@@ -67,11 +67,19 @@ A web application for entering church pledge donations
   [Inject]
   Services.IDonationDataService DonationDataService { get; set; }
 
-  private Installment installment = new Installment() {
-      Date = DateTime.Today,
-      Year = 2022,
-      Pledger = "Name goes here"
-  };
+  private int Year { get; set; } = DateTime.Today.Year;
+
+  private Installment installment { get; set; }
+
+  protected override async Task OnInitializedAsync()
+  {
+      installment = new Installment()
+      {
+          Date = DateTime.Today,
+          Year = Year,
+          Pledger = "Name goes here"
+      };
+  }
 
   private string message;
 
@@ -79,8 +87,8 @@ A web application for entering church pledge donations
   {
       message = "";
       int envelopeNum = installment.EnvelopeNumber;
-      int id = Envelope.GetIndex(2022, envelopeNum);
-      DisplayEnvelope envelope = await DisplayEnvelopeDataService.GetEnvelopeDetails(2022, envelopeNum);
+      int id = Envelope.GetIndex(installment.Year, envelopeNum);
+      DisplayEnvelope envelope = await DisplayEnvelopeDataService.GetEnvelopeDetails(installment.Year, envelopeNum);
       if (envelope == null)
       {
           message = $"Couldn't find record for envelope number {envelopeNum}";
