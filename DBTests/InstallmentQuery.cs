@@ -148,7 +148,48 @@ namespace DBTests
 	}
 
 
-	[TestMethod]
+		[TestMethod]
+		public async Task TestReadByYear()
+		{
+			int pledgerId = initDB();
+			using (var db = new AppDb(TestConnectionString))
+			{
+				await db.Connection.OpenAsync();
+				DateTime testDate = DateTime.Parse("2021-08-14");
+				InstallmentQuery query = new InstallmentQuery(db);
+				List<Installment> result;
+				try
+				{
+					result = await query.ReadAllAsyncByDate(testDate);
+				}
+				catch (Exception excp)
+				{
+					Assert.Fail("Exception: " + excp.Message);
+					throw;
+				}
+				Assert.IsNotNull(result);
+				Assert.AreEqual(1, result.Count);
+				Installment installment = result[0];
+				Assert.AreEqual(8, installment.Date.Month);
+				Assert.AreEqual(10, installment.Amount);
+				Assert.AreEqual(pledgerId, installment.PledgerId);
+
+				testDate = testDate.AddDays(1);
+				try
+				{
+					result = await query.ReadAllAsyncByDate(testDate);
+				}
+				catch (Exception excp)
+				{
+					Assert.Fail("Exception: " + excp.Message);
+					throw;
+				}
+				Assert.IsNotNull(result);
+				Assert.AreEqual(0, result.Count);
+			}
+		}
+
+		[TestMethod]
 	[Ignore]
 	public async Task TestInsert()
 	{

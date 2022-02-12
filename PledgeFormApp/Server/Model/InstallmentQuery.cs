@@ -79,6 +79,25 @@ namespace PledgeFormApp.Server.Model
       }
     }
 
+    public async Task<List<Installment>> ReadAllAsyncByYear(int year)
+    {
+      using (DbCommand cmd = Db.Connection.CreateCommand())
+      {
+        StringBuilder sb = new StringBuilder();
+        sb.Append(@"SELECT pd.id, pd.date, pd.amount, pd.pledger, p.name, p.qbName, ev.envelopeNum, ev.year ");
+        sb.Append(@"FROM pledgedonations pd ");
+        sb.Append(@"JOIN pledgers p on p.id = pd.pledger ");
+        sb.Append(@"JOIN envelopes ev on ev.pledgerId = p.id ");
+        sb.Append(@"WHERE ev.year = @year");
+        cmd.CommandText = sb.ToString();
+        DbParameter parm = cmd.CreateParameter();
+        parm.ParameterName = "@year";
+        parm.Value = year;
+        cmd.Parameters.Add(parm);
+        return await ReadAllAsync(await cmd.ExecuteReaderAsync());
+      }
+    }
+
     public async Task<int> InsertAsync(Installment donation)
     {
       using var cmd = Db.Connection.CreateCommand();
