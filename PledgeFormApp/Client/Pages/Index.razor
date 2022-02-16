@@ -7,115 +7,127 @@
 
 A web application for entering church pledge donations
 
-<EditForm Model=@installment>
-    <div class="container">
-        <div class="row top-buffer">
-            <div class="col-lg-7" align="center">
-                <label class="top-label" for="Date">Pledger</label>
-            </div>
-            <div class="col-lg-5 top-label" align="center">
-                <label class="top-label" for="Id">Id</label>
-            </div>
-        </div>
-        <div class="row top-buffer">
-            <div class="col-lg-7" align="center">
-                <InputDate @bind-Value="installment.Date" id="Date" />
-            </div>
-            <div class="col-lg-5" align="center">
-                <InputNumber style="width: 60px;" @bind-Value="installment.EnvelopeNumber" id="Id"/>
-            </div>
-        </div>
-        <div class="row top-buffer">
-            <div class="col-lg-2"/>
-            <div class="col-lg-5" align="right" style="color: red; font-style: italic">
-                @message
-            </div>
-            <div class="col-lg-5" align="center">
-                <button class="btn btn-primary" @onclick="ShowPledger">Show</button>
-            </div>
-        </div>
-        <div class="row top-buffer">
-            <div class="col-lg-12" align="center">
-                <img src="images/church.png" />
-            </div>
-        </div>
-        <div class="row top-buffer">
-            <div class="col-lg-5"/>
-            <div class="col-lg-6">
-                <label for="Amount">Amount $</label>
-                <InputNumber style="width: 70px;" @bind-Value="installment.Amount" id="Amount"/>
-                <button class="btn btn-success" @onclick="Record">Record</button>
-            </div>
-        </div>
-        <div style="margin: 5px" class="row top-buffer">
-            <div class="col-lg-3" />
-            <div class="col-lg-9">
-                <label for="Amount">Name</label>
-                <label style="width: 200px;" id="Amount" class="border border-primary px-1">@installment.Pledger</label>
-            </div>
-        </div>
-    </div>
-</EditForm>
 
-@code {
-  [Inject]
-  Services.IInstallmentDataService InstallmentDataService { get; set; }
-
-  [Inject]
-  Services.IDisplayEnvelopeDataService DisplayEnvelopeDataService { get; set; }
-
-  [Inject]
-  Services.IDonationDataService DonationDataService { get; set; }
-
-  private int Year { get; set; } = DateTime.Today.Year;
-
-  private Installment installment { get; set; }
-
-  protected override async Task OnInitializedAsync()
-  {
-      installment = new Installment()
-      {
-          Date = DateTime.Today,
-          Year = Year,
-          Pledger = "Name goes here"
-      };
-  }
-
-  private string message;
-
-  private async void ShowPledger()
-  {
-      message = "";
-      int envelopeNum = installment.EnvelopeNumber;
-      int id = Envelope.GetIndex(installment.Year, envelopeNum);
-      DisplayEnvelope envelope = await DisplayEnvelopeDataService.GetEnvelopeDetails(installment.Year, envelopeNum);
-      if (envelope == null)
-      {
-          message = $"Couldn't find record for envelope number {envelopeNum}";
-      }
-      else {
-          installment = new Installment()
-          {
-              EnvelopeNumber = envelopeNum,
-              Date = installment.Date,
-              Amount = envelope.Pledger.Amount,
-              Year = installment.Year,
-              Pledger = envelope.Pledger.Name,
-              PledgerId = envelope.Pledger.ID
-          };
-      }
-      StateHasChanged();
-  }
-
-  private void Record()
-  {
-      Donation donation = new Donation()
-      {
-          Amount = installment.Amount,
-          Date = installment.Date,
-          PledgerId = installment.PledgerId
-      };
-      DonationDataService.AddDonation(donation);
-  }
-
+@if (installment == null)
+{
+    <p><em>Loading...</em></p>
 }
+else
+{
+    <EditForm Model=@installment>
+        <div class="container">
+            <div class="row top-buffer">
+                <div class="col-lg-7" align="center">
+                    <label class="top-label" for="Date">Pledger</label>
+                </div>
+                <div class="col-lg-5 top-label" align="center">
+                    <label class="top-label" for="Id">Id</label>
+                </div>
+            </div>
+            <div class="row top-buffer">
+                <div class="col-lg-7" align="center">
+                    <InputDate @bind-Value="installment.Date" id="Date" />
+                </div>
+                <div class="col-lg-5" align="center">
+                    <InputNumber style="width: 60px;" @bind-Value="installment.EnvelopeNumber" id="Id" />
+                </div>
+            </div>
+            <div class="row top-buffer">
+                <div class="col-lg-2" />
+                <div class="col-lg-5" align="right" style="color: red; font-style: italic">
+                    @message
+                </div>
+                <div class="col-lg-5" align="center">
+                    <button class="btn btn-primary" @onclick="ShowPledger">Show</button>
+                </div>
+            </div>
+            <div class="row top-buffer">
+                <div class="col-lg-12" align="center">
+                    <img src="images/church.png" />
+                </div>
+            </div>
+            <div class="row top-buffer">
+                <div class="col-lg-5" />
+                <div class="col-lg-6">
+                    <label for="Amount">Amount $</label>
+                    <InputNumber style="width: 70px;" @bind-Value="installment.Amount" id="Amount" />
+                    <button class="btn btn-success" @onclick="Record">Record</button>
+                </div>
+            </div>
+            <div style="margin: 5px" class="row top-buffer">
+                <div class="col-lg-3" />
+                <div class="col-lg-9">
+                    <label for="Amount">Name</label>
+                    <label style="width: 200px;" id="Amount" class="border border-primary px-1">@installment.Pledger</label>
+                </div>
+            </div>
+        </div>
+    </EditForm>
+}
+
+    @code {
+        [Inject]
+        Services.IInstallmentDataService InstallmentDataService { get; set; }
+
+        [Inject]
+        Services.IDisplayEnvelopeDataService DisplayEnvelopeDataService { get; set; }
+
+        [Inject]
+        Services.IDonationDataService DonationDataService { get; set; }
+
+private int Year { get; set; } = DateTime.Today.Year;
+
+    private Installment installment { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Run(() =>
+        {
+            installment = new Installment()
+            {
+                Date = DateTime.Today,
+                Year = Year,
+                Pledger = "Name goes here"
+            };
+        });
+    }
+
+    private string message;
+
+    private async void ShowPledger()
+    {
+        message = "";
+        int envelopeNum = installment.EnvelopeNumber;
+        int id = Envelope.GetIndex(installment.Year, envelopeNum);
+        DisplayEnvelope envelope = await DisplayEnvelopeDataService.GetEnvelopeDetails(installment.Year, envelopeNum);
+        if (envelope == null)
+        {
+            message = $"Couldn't find record for envelope number {envelopeNum}";
+        }
+        else
+        {
+            installment = new Installment()
+            {
+                EnvelopeNumber = envelopeNum,
+                Date = installment.Date,
+                Amount = envelope.Pledger.Amount,
+                Year = installment.Year,
+                Pledger = envelope.Pledger.Name,
+                PledgerId = envelope.Pledger.ID
+            };
+        }
+        StateHasChanged();
+    }
+
+    private void Record()
+    {
+        Donation donation = new Donation()
+        {
+            Amount = installment.Amount,
+            Date = installment.Date,
+            PledgerId = installment.PledgerId
+        };
+        DonationDataService.AddDonation(donation);
+    }
+
+    }

@@ -51,6 +51,19 @@ namespace PledgeFormApp.Server
       }
     }
 
+    public IEnumerable<Installment> FindByDates(DateTime start, DateTime end)
+    {
+      using (var db = new AppDb(_connectionString))
+      {
+        Task open = db.Connection.OpenAsync();
+        open.Wait();
+        var query = new Model.InstallmentQuery(db);
+        var result = query.ReadByDatesAsync(start, end);
+        result.Wait();
+        return result.Result;
+      }
+    }
+
     public Installment FindByIndex(int index)
     {
       throw new NotImplementedException();

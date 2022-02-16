@@ -17,6 +17,29 @@ namespace PledgeFormApp.Server.Model
       Db = db;
     }
 
+    public async Task<List<Installment>> ReadByDatesAsync(DateTime start, DateTime end)
+    {
+      using (DbCommand cmd = Db.Connection.CreateCommand())
+      {
+        StringBuilder sb = new StringBuilder();
+        sb.Append(@"SELECT pd.id, pd.date, pd.amount, pd.pledger, p.name, p.qbName, ev.envelopeNum, ev.year ");
+        sb.Append(@"FROM pledgedonations pd  ");
+        sb.Append(@"JOIN pledgers p on p.id = pd.pledger ");
+        sb.Append(@"JOIN envelopes ev on ev.pledgerId = p.id ");
+        sb.Append(@"WHERE pd.date >= @start and pd.date < @end");
+        cmd.CommandText = sb.ToString();
+        DbParameter parm = cmd.CreateParameter();
+        parm.ParameterName = "@start";
+        parm.Value = start;
+        cmd.Parameters.Add(parm);
+        parm = cmd.CreateParameter();
+        parm.ParameterName = "@end";
+        parm.Value = end;
+        cmd.Parameters.Add(parm);
+        return await ReadAllAsync(await cmd.ExecuteReaderAsync());
+      }
+    }
+
     public async Task<List<Installment>> ReadAllAsync()
     {
       using (DbCommand cmd = Db.Connection.CreateCommand())

@@ -133,12 +133,12 @@ namespace DBTests
 		Assert.AreEqual(pledgerId, installment.PledgerId);
 
 		testDate = testDate.AddDays(1);
-        try 
+    try 
 		{ 
 		  result = await query.ReadAllAsyncByDate(testDate);
 		}
 		catch (Exception excp)
-        {
+    {
 		  Assert.Fail("Exception: " + excp.Message);
 		  throw;
 		}
@@ -155,12 +155,11 @@ namespace DBTests
 			using (var db = new AppDb(TestConnectionString))
 			{
 				await db.Connection.OpenAsync();
-				DateTime testDate = DateTime.Parse("2021-08-14");
 				InstallmentQuery query = new InstallmentQuery(db);
 				List<Installment> result;
 				try
 				{
-					result = await query.ReadAllAsyncByDate(testDate);
+					result = await query.ReadAllAsyncByYear(2021);
 				}
 				catch (Exception excp)
 				{
@@ -174,10 +173,9 @@ namespace DBTests
 				Assert.AreEqual(10, installment.Amount);
 				Assert.AreEqual(pledgerId, installment.PledgerId);
 
-				testDate = testDate.AddDays(1);
 				try
 				{
-					result = await query.ReadAllAsyncByDate(testDate);
+					result = await query.ReadAllAsyncByYear(2022);
 				}
 				catch (Exception excp)
 				{
@@ -190,7 +188,96 @@ namespace DBTests
 		}
 
 		[TestMethod]
-	[Ignore]
+		public async Task TestReadByDates()
+		{
+			int pledgerId = initDB();
+			using (var db = new AppDb(TestConnectionString))
+			{
+				await db.Connection.OpenAsync();
+				DateTime testDate = DateTime.Parse("2021-08-14");
+				InstallmentQuery query = new InstallmentQuery(db);
+				List<Installment> result;
+				try
+				{
+					result = await query.ReadByDatesAsync(testDate, testDate.AddDays(1));
+				}
+				catch (Exception excp)
+				{
+					Assert.Fail("Exception: " + excp.Message);
+					throw;
+				}
+				Assert.IsNotNull(result);
+				Assert.AreEqual(1, result.Count);
+				Installment installment = result[0];
+				Assert.AreEqual(8, installment.Date.Month);
+				Assert.AreEqual(10, installment.Amount);
+				Assert.AreEqual(pledgerId, installment.PledgerId);
+
+				try
+				{
+					result = await query.ReadByDatesAsync(testDate.AddDays(1), testDate.AddDays(2));
+				}
+				catch (Exception excp)
+				{
+					Assert.Fail("Exception: " + excp.Message);
+					throw;
+				}
+				Assert.IsNotNull(result);
+				Assert.AreEqual(0, result.Count);
+
+				using (MySqlConnection conn = new MySqlConnection(TestConnectionString)) 
+				{
+					conn.Open();
+					using (DbCommand cmd = conn.CreateCommand())
+					{
+						cmd.CommandText = string.Format("insert into pledgedonations (date, amount, pledger) values ('2021-08-21', '10', {0})", pledgerId);
+						cmd.ExecuteNonQuery();
+					}
+				}
+
+				try
+				{
+					result = await query.ReadByDatesAsync(testDate, testDate.AddDays(8));
+				}
+				catch (Exception excp)
+				{
+					Assert.Fail("Exception: " + excp.Message);
+					throw;
+				}
+				Assert.IsNotNull(result);
+				Assert.AreEqual(2, result.Count);
+				installment = result[0];
+				Assert.AreEqual(8, installment.Date.Month);
+				Assert.AreEqual(14, installment.Date.Day);
+				Assert.AreEqual(10, installment.Amount);
+				Assert.AreEqual(pledgerId, installment.PledgerId);
+				installment = result[1];
+				Assert.AreEqual(8, installment.Date.Month);
+				Assert.AreEqual(21, installment.Date.Day);
+				Assert.AreEqual(10, installment.Amount);
+				Assert.AreEqual(pledgerId, installment.PledgerId);
+
+				try
+				{
+					result = await query.ReadByDatesAsync(testDate.AddDays(1), testDate.AddDays(8));
+				}
+				catch (Exception excp)
+				{
+					Assert.Fail("Exception: " + excp.Message);
+					throw;
+				}
+				Assert.IsNotNull(result);
+				Assert.AreEqual(1, result.Count);
+
+				installment = result[0];
+				Assert.AreEqual(8, installment.Date.Month);
+				Assert.AreEqual(21, installment.Date.Day);
+				Assert.AreEqual(10, installment.Amount);
+				Assert.AreEqual(pledgerId, installment.PledgerId);
+			}
+		}
+
+		[TestMethod]
 	public async Task TestInsert()
 	{
 	  int pledgerId = initDB();
