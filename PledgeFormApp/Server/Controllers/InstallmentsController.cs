@@ -31,6 +31,19 @@ namespace PledgeFormApp.Server.Controllers
       }
     }
 
+    [HttpGet("{start}/{end}")]
+    public async Task<ActionResult<IEnumerable<Installment>>> Get(DateTime start, DateTime end)
+    {
+      try
+      {
+        return Ok(await Task.Run(() => _repository.FindByDates(start, end)));
+      }
+      catch (Exception excp)
+      {
+        return StatusCode(StatusCodes.Status500InternalServerError, excp);
+      }
+    }
+
     // GET: PledgersController/Create
     [HttpPost("create")]
     public async Task<ActionResult<Installment>> Create([FromBody] Installment installment)

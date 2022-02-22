@@ -9,56 +9,68 @@
 }
 else
 {
-    <h3>Enter pledge donation</h3>
-    <EditForm Model="@inputInstallment">
-        <div class="form-group">
-            <label for="Date">Date:</label>
-            <InputDate @bind-Value="inputInstallment.Date" class="form-control" id="Date" />
+    <EditForm Model="@displayModel">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3">
+                    <InputRadioGroup Name="DisplayType" @bind-Value="displayModel.ListMode">
+                        <InputRadio Name="DisplayType" Value="DonationDisplayModel.DonationsListMode.year" />This year<br/>
+                        <InputRadio Name="DisplayType" Value="DonationDisplayModel.DonationsListMode.today" />Today<br/>
+                        <InputRadio Name="DisplayType" Value="DonationDisplayModel.DonationsListMode.custom" />Custom<br/>
+                    </InputRadioGroup>
+                </div>
+                <div class="col-lg-3 form-group">
+                    <label for="Date">Date:</label>
+                </div>
+                <div class="col-lg-4 form-group">
+                    <InputDate @bind-Value="displayModel.FromDate" class="form-control" id="Date" />
+                </div>
+            </div>
         </div>
-    </EditForm>       
+    </EditForm>
     <h3>List</h3>
-        <table class="table">
-            <thead>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Pledger</th>
+                <th>Envelope</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (PledgeFormApp.Shared.Installment installment in installmentsList)
+            {
                 <tr>
-                    <th>ID</th>
-                    <th>Date</th>
-                    <th>Amount</th>
-                    <th>Pledger</th>
-                    <th>Envelope</th>
+                    <td>@installment.ID</td>
+                    <td>@installment.Date.ToString("MM/dd/yyyy")</td>
+                    <td>@installment.Amount</td>
+                    <td>@installment.Pledger</td>
+                    <td>@installment.EnvelopeNumber</td>
                 </tr>
-            </thead>
-            <tbody>
-                @foreach (PledgeFormApp.Shared.Installment installment in installmentsList)
-                {
-                    <tr>
-                        <td>@installment.ID</td>
-                        <td>@installment.Date.ToString("MM/dd/yyyy")</td>
-                        <td>@installment.Amount</td>
-                        <td>@installment.Pledger</td>
-                        <td>@installment.EnvelopeNumber</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+            }
+        </tbody>
+    </table>
 
 }
 
 @code {
-    private PledgeFormApp.Shared.Installment[] installmentsList;
+  private PledgeFormApp.Shared.Installment[] installmentsList;
 
-    private PledgeFormApp.Shared.Installment inputInstallment = new Installment() { Date = DateTime.Today };
+  private DonationDisplayModel displayModel = new DonationDisplayModel();
 
-    [Inject]
-    Services.IInstallmentDataService InstallmentDataService { get; set; }
+  [Inject]
+  Services.IInstallmentDataService InstallmentDataService { get; set; }
 
-    [Inject]
-    Services.IDonationDataService DonationDataService { get; set; }
+  [Inject]
+  Services.IDonationDataService DonationDataService { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        IEnumerable<Installment> list = await InstallmentDataService.GetAllInstallments();
-        installmentsList = list.ToArray();
+  protected override async Task OnInitializedAsync()
+  {
+      IEnumerable<Installment> list = await InstallmentDataService.GetInstallmentsByDates(displayModel.FromDate, displayModel.ToDate);
+      installmentsList = list.ToArray();
 
-    }
+  }
 
 }

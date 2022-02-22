@@ -51,6 +51,12 @@ namespace PledgeFormApp.Server
       }
     }
 
+    /// <summary>
+    /// Find donations between start and end, inclusive
+    /// </summary>
+    /// <param name="start"></param>
+    /// <param name="end"></param>
+    /// <returns></returns>
     public IEnumerable<Installment> FindByDates(DateTime start, DateTime end)
     {
       using (var db = new AppDb(_connectionString))
@@ -58,7 +64,7 @@ namespace PledgeFormApp.Server
         Task open = db.Connection.OpenAsync();
         open.Wait();
         var query = new Model.InstallmentQuery(db);
-        var result = query.ReadByDatesAsync(start, end);
+        var result = query.ReadByDatesAsync(start, end.AddDays(1));
         result.Wait();
         return result.Result;
       }

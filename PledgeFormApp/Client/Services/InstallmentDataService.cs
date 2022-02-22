@@ -33,5 +33,21 @@ namespace PledgeFormApp.Client.Services
     {
       throw new NotImplementedException();
     }
+
+    public async Task<IEnumerable<Installment>> GetInstallmentsByDates(DateTime from, DateTime to)
+    {
+      string fromDateStr = from.ToString("yyyy - MM - dd");
+      string toDateStr = to.ToString("yyyy - MM - dd");
+      string url = $"Installments/{fromDateStr}/{toDateStr}";
+      HttpResponseMessage response = await _client.GetAsync(url);
+      string content = await response.Content.ReadAsStringAsync();
+      if (!response.IsSuccessStatusCode)
+      {
+        throw new ApplicationException(content);
+      }
+
+      Installment[] installmentList = JsonSerializer.Deserialize<Installment[]>(content, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+      return installmentList;
+    }
   }
 }

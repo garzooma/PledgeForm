@@ -17,6 +17,12 @@ namespace PledgeFormApp.Server.Model
       Db = db;
     }
 
+    /// <summary>
+    /// Get installments made between start and end, exclusive of end
+    /// </summary>
+    /// <param name="start"></param>
+    /// <param name="end"></param>
+    /// <returns></returns>
     public async Task<List<Installment>> ReadByDatesAsync(DateTime start, DateTime end)
     {
       using (DbCommand cmd = Db.Connection.CreateCommand())
