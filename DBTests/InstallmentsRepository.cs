@@ -116,7 +116,7 @@ namespace DBTests
 		[TestMethod]
     public void TestFindByDates()
     {
-      int pledgerId = DBTests.InstallmentQueryTest.initDB();
+      int pledgerId = initDB();
       InstallmentsRepository repository = new InstallmentsRepository(TestConnectionString);
 			DateTime testDate = new DateTime(2021, 8, 14);
       List<Installment> ret = repository.FindByDates(testDate, testDate.AddDays(7)).ToList();
@@ -128,6 +128,29 @@ namespace DBTests
 			Assert.AreEqual(5, installment.Amount);
 			Assert.AreEqual(pledgerId, installment.PledgerId);
 			Assert.AreEqual(2021, installment.Year);
+		}
+
+		[TestMethod]
+		public void TestFindByYear()
+		{
+			int pledgerId = initDB();
+			InstallmentsRepository repository = new InstallmentsRepository(TestConnectionString);
+			DateTime testDate = new DateTime(2021, 8, 14);
+			List<Installment> ret = repository.FindByYear(2021).ToList();
+			Assert.IsNotNull(ret);
+			Assert.AreEqual(3, ret.Count);
+			//Installment installment = result[0];
+			Installment installment = ret.FirstOrDefault(i => i.Date == new DateTime(2021, 8, 14) && i.EnvelopeNumber == 1);
+			Assert.IsNotNull(installment);
+			Assert.AreEqual(8, installment.Date.Month);
+			Assert.AreEqual(5, installment.Amount);
+			Assert.AreEqual(pledgerId, installment.PledgerId);
+			Assert.AreEqual(2021, installment.Year);
+
+			ret = repository.FindByYear(2022).ToList();
+			Assert.IsNotNull(ret);
+			Assert.AreEqual(0, ret.Count);
+
 		}
 	}
 }

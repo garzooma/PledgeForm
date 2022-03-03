@@ -11,5 +11,6 @@ namespace PledgeFormApp.Client.Services
     Task<IEnumerable<Installment>> GetAllInstallments();
     Task<Installment> GetInstallmentDetails(int donationId);
     Task<IEnumerable<Installment>> GetInstallmentsByDates(DateTime from, DateTime to);
+    Task<IEnumerable<Installment>> GetInstallmentsByYear(int year);
   }
 }

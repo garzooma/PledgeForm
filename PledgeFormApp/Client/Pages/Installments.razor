@@ -68,9 +68,29 @@ else
 
   protected override async Task OnInitializedAsync()
   {
-      IEnumerable<Installment> list = await InstallmentDataService.GetInstallmentsByDates(displayModel.FromDate, displayModel.ToDate);
-      installmentsList = list.ToArray();
+      await Task.Run(() => ShowInstallments());
+      displayModel.PropertyChanged += (s, e) => { UpdateData();};
 
+  }
+
+  private async void UpdateData()
+  {
+      await Task.Run(() => ShowInstallments());
+      StateHasChanged();
+  }
+
+  private async void ShowInstallments()
+  {
+      IEnumerable<Installment> list;
+      if (displayModel.ListMode == DonationDisplayModel.DonationsListMode.year)
+      {
+          list = await InstallmentDataService.GetInstallmentsByYear(displayModel.Year);
+      }
+      else
+      {
+          list = await InstallmentDataService.GetInstallmentsByDates(displayModel.FromDate, displayModel.ToDate);
+      }
+      installmentsList = list.ToArray();
   }
 
 }

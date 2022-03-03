@@ -75,6 +75,19 @@ namespace PledgeFormApp.Server
       throw new NotImplementedException();
     }
 
+    public IEnumerable<Installment> FindByYear(int year)
+    {
+      using (var db = new AppDb(_connectionString))
+      {
+        Task open = db.Connection.OpenAsync();
+        open.Wait();
+        var query = new Model.InstallmentQuery(db);
+        var result = query.ReadAllAsyncByYear(year);
+        result.Wait();
+        return result.Result;
+      }
+    }
+
     public void Update(Installment entity)
     {
       throw new NotImplementedException();

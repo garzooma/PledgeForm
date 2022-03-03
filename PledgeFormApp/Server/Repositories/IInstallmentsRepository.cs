@@ -9,6 +9,6 @@ namespace PledgeFormApp.Server
   public interface IInstallmentsRepository : IRepositoryBase<Installment>
   {
     IEnumerable<Installment> FindByDates(DateTime start, DateTime end);
-
+    IEnumerable<Installment> FindByYear(int year);
   }
 }

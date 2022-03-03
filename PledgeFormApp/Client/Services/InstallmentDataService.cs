@@ -49,5 +49,19 @@ namespace PledgeFormApp.Client.Services
       Installment[] installmentList = JsonSerializer.Deserialize<Installment[]>(content, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
       return installmentList;
     }
+
+    public async Task<IEnumerable<Installment>> GetInstallmentsByYear(int year)
+    {
+      string url = $"Installments/{year}";
+      HttpResponseMessage response = await _client.GetAsync(url);
+      string content = await response.Content.ReadAsStringAsync();
+      if (!response.IsSuccessStatusCode)
+      {
+        throw new ApplicationException(content);
+      }
+
+      Installment[] installmentList = JsonSerializer.Deserialize<Installment[]>(content, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+      return installmentList;
+    }
   }
 }
