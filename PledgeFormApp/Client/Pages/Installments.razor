@@ -68,7 +68,8 @@ else
 
   protected override async Task OnInitializedAsync()
   {
-      await Task.Run(() => ShowInstallments());
+      displayModel.ListMode = DonationDisplayModel.DonationsListMode.today;
+      await ShowInstallments();
       displayModel.PropertyChanged += (s, e) => { UpdateData();};
 
   }
@@ -79,12 +80,16 @@ else
       StateHasChanged();
   }
 
-  private async void ShowInstallments()
+  private async Task ShowInstallments()
   {
       IEnumerable<Installment> list;
       if (displayModel.ListMode == DonationDisplayModel.DonationsListMode.year)
       {
           list = await InstallmentDataService.GetInstallmentsByYear(displayModel.Year);
+      }
+      else if (displayModel.ListMode == DonationDisplayModel.DonationsListMode.all)
+      {
+          list = await InstallmentDataService.GetAllInstallments();
       }
       else
       {

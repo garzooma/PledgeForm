@@ -15,7 +15,7 @@ namespace PledgeFormApp.Client.Pages
     {
       listMode = DonationsListMode.today;
     }
-    public enum DonationsListMode {year, today, custom}
+    public enum DonationsListMode {all, year, today, custom}
 
     private DonationsListMode listMode;
     public DonationsListMode ListMode
@@ -30,6 +30,6 @@ namespace PledgeFormApp.Client.Pages
     public DateTime FromDate = DateTime.Today;
     public DateTime ToDate = DateTime.Today;
 
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler PropertyChanged = (s,e) => {};
   }
 }
