@@ -27,8 +27,33 @@ namespace PledgeFormApp.Client.Pages
       }
     }
     public int Year = DateTime.Today.Year;
-    public DateTime FromDate = DateTime.Today;
-    public DateTime ToDate = DateTime.Today;
+    private DateTime fromDate = DateTime.Today;
+    public DateTime FromDate
+    {
+      get
+      {
+        return fromDate;
+      }
+      set
+      {
+        fromDate = value;
+        PropertyChanged(this, new PropertyChangedEventArgs(nameof(FromDate)));
+      }
+    }
+
+    private DateTime toDate = DateTime.Today;
+    public DateTime ToDate
+    {
+      get
+      {
+        return toDate;
+      }
+      set
+      {
+        toDate = value;
+        PropertyChanged(this, new PropertyChangedEventArgs(nameof(ToDate)));
+      }
+    }
 
     public event PropertyChangedEventHandler PropertyChanged = (s,e) => {};
   }

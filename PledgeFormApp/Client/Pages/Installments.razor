@@ -14,16 +14,26 @@ else
             <div class="row">
                 <div class="col-lg-3">
                     <InputRadioGroup Name="DisplayType" @bind-Value="displayModel.ListMode">
-                        <InputRadio Name="DisplayType" Value="DonationDisplayModel.DonationsListMode.year" />This year<br/>
-                        <InputRadio Name="DisplayType" Value="DonationDisplayModel.DonationsListMode.today" />Today<br/>
-                        <InputRadio Name="DisplayType" Value="DonationDisplayModel.DonationsListMode.custom" />Custom<br/>
+                        <InputRadio Name="DisplayType" Value="DonationDisplayModel.DonationsListMode.year" />This year<br />
+                        <InputRadio Name="DisplayType" Value="DonationDisplayModel.DonationsListMode.today" />Today<br />
+                        <InputRadio Name="DisplayType" Value="DonationDisplayModel.DonationsListMode.custom" />Custom<br />
                     </InputRadioGroup>
                 </div>
-                <div class="col-lg-3 form-group">
-                    <label for="Date">Date:</label>
+                <div class="col-lg-8 form-group" hidden="@hideDate">
+                    <div class="labeled-control">
+                        <label for="Date">Date:</label>
+                        <InputDate @bind-Value="displayModel.FromDate" class="form-control" id="Date" />
+                    </div>
                 </div>
-                <div class="col-lg-4 form-group">
-                    <InputDate @bind-Value="displayModel.FromDate" class="form-control" id="Date" />
+                <div class="col-lg-8 form-group" hidden="@hideDateRange">
+                    <div class="labeled-control">
+                        <label for="FromDate">From:</label>
+                        <InputDate @bind-Value="displayModel.FromDate" class="form-control" id="FromDate" />
+                    </div>
+                    <div class="labeled-control">
+                        <label for="ToDate">To:</label>
+                        <InputDate @bind-Value="displayModel.ToDate" class="form-control" id="ToDate" />
+                    </div>
                 </div>
             </div>
         </div>
@@ -60,6 +70,22 @@ else
 
   private DonationDisplayModel displayModel = new DonationDisplayModel();
 
+  private bool hideDate
+  {
+      get
+      {
+          return displayModel.ListMode != DonationDisplayModel.DonationsListMode.today;
+      }
+  }
+
+  private bool hideDateRange
+  {
+      get
+      {
+          return displayModel.ListMode != DonationDisplayModel.DonationsListMode.custom;
+      }
+  }
+
   [Inject]
   Services.IInstallmentDataService InstallmentDataService { get; set; }
 
@@ -83,6 +109,7 @@ else
   private async Task ShowInstallments()
   {
       IEnumerable<Installment> list;
+      
       if (displayModel.ListMode == DonationDisplayModel.DonationsListMode.year)
       {
           list = await InstallmentDataService.GetInstallmentsByYear(displayModel.Year);
@@ -90,6 +117,10 @@ else
       else if (displayModel.ListMode == DonationDisplayModel.DonationsListMode.all)
       {
           list = await InstallmentDataService.GetAllInstallments();
+      }
+      else if (displayModel.ListMode == DonationDisplayModel.DonationsListMode.all)
+      {
+          list = await InstallmentDataService.GetInstallmentsByDates(displayModel.FromDate, displayModel.FromDate);
       }
       else
       {
