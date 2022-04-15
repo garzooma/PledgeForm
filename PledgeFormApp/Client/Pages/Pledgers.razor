@@ -5,6 +5,10 @@
 
 <h1 class="page-title">Pledgers List</h1>
 
+<div style="color: red; font-style: italic">
+    @message
+</div>
+
 <button @onclick="AddPledger">Add Pledger</button>
 
 @if (pledgerList == null)
@@ -51,6 +55,7 @@ else
 @code {
 
   private Pledger[] pledgerList;
+  private string message;
 
   [Inject]
   Services.IPledgerDataService PledgerDataService { get; set; }
@@ -60,9 +65,15 @@ else
 
   protected override async Task OnInitializedAsync()
   {
-      //pledgerList = await Http.GetFromJsonAsync<Pledger[]>("Pledgers");
-      IEnumerable<Pledger> list = await PledgerDataService.GetAllPledgers();
-      pledgerList = list.ToArray();
+      try {
+          IEnumerable<Pledger> list = await PledgerDataService.GetAllPledgers();
+          pledgerList = list.ToArray();
+          message = string.Empty;
+      }
+      catch (Exception excp)
+      {
+          message = excp.Message;
+      }
   }
 
   protected async Task AddPledger()

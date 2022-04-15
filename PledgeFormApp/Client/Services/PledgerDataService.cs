@@ -44,12 +44,14 @@ namespace PledgeFormApp.Client.Services
     public async Task<IEnumerable<Pledger>> GetAllPledgers()
     {
       HttpResponseMessage response = await _client.GetAsync("Pledgers");
-      string content = await response.Content.ReadAsStringAsync();
       if (!response.IsSuccessStatusCode)
       {
-        throw new ApplicationException(content);
+        string result = response.Content.ReadAsStringAsync().Result;
+
+        throw new ApplicationException(result);
       }
 
+      string content = await response.Content.ReadAsStringAsync();
       Pledger[] pledgerList = JsonSerializer.Deserialize<Pledger[]>(content, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
       return pledgerList;
     }

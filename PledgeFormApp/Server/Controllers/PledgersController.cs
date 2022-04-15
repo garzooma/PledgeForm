@@ -35,7 +35,7 @@ namespace PledgeFormApp.Server.Controllers
         return Ok( await Task.Run(() => _repository.FindAll()));
       } catch (Exception excp)
       {
-        return StatusCode(StatusCodes.Status500InternalServerError, excp);
+        return StatusCode(StatusCodes.Status500InternalServerError, excp.Message);
       }
     }
 
