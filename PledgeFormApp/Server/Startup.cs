@@ -31,6 +31,7 @@ namespace PledgeFormApp.Server
       services.AddScoped<IInstallmentsRepository, InstallmentsRepository>();
       services.AddScoped<IEnvelopesRepository, EnvelopesRepository>();
       services.AddScoped<IDisplayEnvelopesRepository, DisplayEnvelopesRepository>();
+      services.AddSwaggerDocument();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -40,6 +41,8 @@ namespace PledgeFormApp.Server
       {
         app.UseDeveloperExceptionPage();
         app.UseWebAssemblyDebugging();
+        app.UseOpenApi();
+        app.UseSwaggerUi3();
       }
       else
       {

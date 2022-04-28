@@ -63,9 +63,9 @@ namespace PledgeFormApp.Server.Controllers
       }
     }
 
-    public IActionResult Index()
-    {
-      return View();
-    }
+    //public IActionResult Index()
+    //{
+    //  return View();
+    //}
   }
 }
